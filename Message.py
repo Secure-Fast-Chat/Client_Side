@@ -28,6 +28,14 @@ class Message:
             left_message = left_message[bytes_sent:]
         return
 
+    def _recv_data_from_server(self,size):
+        self._recvd_msg = b''
+        msg_length_left = size
+        while True:
+            self._recvd_msg += self.socket.recv(msg_length_left)
+            msg_length_left = size - len(self._recvd_msg)
+        return
+
     def _json_encode(self, obj, encoding):
         """Function to encode dictionary to bytes object
 
@@ -78,9 +86,18 @@ class Message:
         return proto_header + encoded_json_header + content
 
     def _login(self):
+        """ Function to help login into the system. This function sends the login details to the server |
+        The function expects to recieve a response of size 2 from server which gives 0 if invalid id/password and 1 if successful login and 2 for any other case
+
+        :return: Response from server converted to int
+        :rtype: int
+        """
+
         self._data_to_send = self._create_login_request()
         self._send_data_to_server()
         # Recieve login result from server
+        self._recv_data_from_server(2)
+        return struct.unpack('>H',self._recvd_msg)[0]
 
     def processTask(self):
         if self.task == 'login':

@@ -27,11 +27,11 @@ def login():
     passwd = getpass.getpass(prompt = "Enter Password: ")
     print("  Connecting to Server...")
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    #   try:
-    #       sock.connect((host,port))
-    #   except ConnectionRefusedError:
-    #       print(f"\nUnable to Connect to server on {host}:{port}")
-    #       exit()
+    try:
+        sock.connect((host,port))
+    except ConnectionRefusedError:
+        print(f"\nUnable to Connect to server on {host}:{port}")
+        exit()
 
     # Use message class for sending request
     message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd})
@@ -39,12 +39,16 @@ def login():
     if(response == 1):
         print("Successfully Logged In")
         return sock
-    elif response == -1:
+    elif response == 0:
         print("Invalid User Id or Password. Try Again")
         return login()
-    else:
+    elif response == 2:
         print("Unable to Login. Please Try Again.")
         return login()
+    ##############################################################################################
+    else:
+        raise Exception("Why this Error?") # Remove this if everything works correctly
+    ##############################################################################################
 
 
 
