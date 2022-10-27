@@ -1,0 +1,16 @@
+\indexentry{module@\spxentry{module}!Message@\spxentry{Message}|hyperpage}{1}
+\indexentry{Message@\spxentry{Message}!module@\spxentry{module}|hyperpage}{1}
+\indexentry{Message (class in Message)@\spxentry{Message}\spxextra{class in Message}|hyperpage}{1}
+\indexentry{\_send\_data\_to\_server() (Message.Message method)@\spxentry{\_send\_data\_to\_server()}\spxextra{Message.Message method}|hyperpage}{1}
+\indexentry{\_recv\_data\_from\_server() (Message.Message method)@\spxentry{\_recv\_data\_from\_server()}\spxextra{Message.Message method}|hyperpage}{1}
+\indexentry{\_json\_encode() (Message.Message method)@\spxentry{\_json\_encode()}\spxextra{Message.Message method}|hyperpage}{1}
+\indexentry{\_hash\_password() (Message.Message method)@\spxentry{\_hash\_password()}\spxextra{Message.Message method}|hyperpage}{1}
+\indexentry{\_create\_login\_request() (Message.Message method)@\spxentry{\_create\_login\_request()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{\_create\_signup\_request() (Message.Message method)@\spxentry{\_create\_signup\_request()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{\_login() (Message.Message method)@\spxentry{\_login()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{\_signup() (Message.Message method)@\spxentry{\_signup()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{processTask() (Message.Message method)@\spxentry{processTask()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{module@\spxentry{module}!app@\spxentry{app}|hyperpage}{2}
+\indexentry{app@\spxentry{app}!module@\spxentry{module}|hyperpage}{2}
+\indexentry{login() (in module app)@\spxentry{login()}\spxextra{in module app}|hyperpage}{2}
+\indexentry{signup() (in module app)@\spxentry{signup()}\spxextra{in module app}|hyperpage}{2}

@@ -35,8 +35,22 @@
 <span id="app-module"></span><h1>app module<a class="headerlink" href="#module-app" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="app.login">
-<code class="sig-prename descclassname">app.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.login" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">app.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sock</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to help user log in to the app</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Socket with which user is connected to server</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>socket.socket</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.signup">
+<code class="sig-prename descclassname">app.</code><code class="sig-name descname">signup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sock</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.signup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to help user make new account</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Socket with which user is connected to server</p>

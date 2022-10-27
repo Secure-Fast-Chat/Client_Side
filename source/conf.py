@@ -29,6 +29,13 @@ author = 'Khushang Singla \\and Mridul Agarwal \\and Arhaan Ahmad'
 # ones.
 extensions = ['sphinx.ext.autodoc'
 ]
+autoclass_content = 'both'
+autodoc_default_options = {
+        'members' : True,
+        'private-members' : True, # Remove if not needed
+        'member-order' : 'bysource',
+        'undoc-members' : True
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

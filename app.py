@@ -17,7 +17,7 @@ welcome_message = """    1. Login using and existing account
     3. Quit
       Enter Your Command(1/2/3): """
 
-def login():
+def login(sock = None):
     """Function to help user log in to the app
 
     :return: Socket with which user is connected to server
@@ -26,12 +26,13 @@ def login():
     uid = input("Enter Username: ")
     passwd = getpass.getpass(prompt = "Enter Password: ")
     print("  Connecting to Server...")
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    try:
-        sock.connect((host,port))
-    except ConnectionRefusedError:
-        print(f"\nUnable to Connect to server on {host}:{port}")
-        exit()
+    if not sock:
+        sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        try:
+            sock.connect((host,port))
+        except ConnectionRefusedError:
+            print(f"\nUnable to Connect to server on {host}:{port}")
+            exit()
 
     # Use message class for sending request
     message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd})
@@ -47,13 +48,49 @@ def login():
         return login()
     ##############################################################################################
     else:
-        raise Exception("Why this Error?") # Remove this if everything works correctly
+        raise Exception("Why this Error in app.py -> login() ?") # Remove this if everything works correctly
     ##############################################################################################
 
+def signup(sock = None):
+    """Function to help user make new account
 
+    :return: Socket with which user is connected to server
+    :rtype: socket.socket"""
+    username = input("Please enter username: ")
+    password1 = getpass.getpass(prompt = "Enter Password: ")
+    password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+    if password1 != password2:
+        print("Password didn't match. Try Again!")
+        return signup()
+    # Do signup work
+    print("  Connecting to Server...")
+    if not sock:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.connect((host,port))
+        except ConnectionRefusedError:
+            print(f"\nUnable to Connect to server on {host}:{port}")
+            exit()
 
+    # Use message class for sending request for signup
+    message = Message.Message(sock,'signup',{'userid' : username , 'password' : password1})
+    response = message.processTask()
+    if response == 0:
+        print("This username is already taken. Sorry! Please try again with a different username")
+        return signup()
+    if response == 1:
+        print("Account created successfully. Now you can login to your new account.\n")
+        return login(sock)
+    elif response == 2:
+        print("Unable to signup. Please try Again.")
+        return signup()
+    ##############################################################################################
+    else:
+        raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
+    ##############################################################################################
 
 if __name__ == "__main__":
+    conn_socket = None
     # Try to login/signup
     try:
         print(start_up_banner)
@@ -64,15 +101,17 @@ if __name__ == "__main__":
                 exit()
                 break
             elif cmd == '1':
-                login()
+                conn_socket = login()
                 break
             elif cmd == '2':
-                signup()
+                conn_socket = signup()
                 break
             else:
                 print("\n  Please Enter a valid Command\n")
     except KeyboardInterrupt:
         print("\nThanks For using the app!!")
+        if conn_socket:
+            conn_socket.close()
         exit()
     except:
         raise

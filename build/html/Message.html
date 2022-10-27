@@ -41,18 +41,154 @@
 <p>This is the class to handle Encryption of messages. The format in which the message is sent to server is determined in this class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>PROTOHEADER_LENGTH</strong> (<em>int</em>) – Stores the length of the “protoheader”</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<em>str</em>) – Task to be done. It can have the values signup, login, send_message</p></li>
+<li><p><strong>socket</strong> (<em>socket.socket</em>) – The socket used for connection with Server</p></li>
+<li><p><strong>request_content</strong> (<em>dict</em>) – Content to include in the request to send to server</p></li>
+<li><p><strong>_data_to_send</strong> (<em>bytes</em>) – Contains the data to send to the server</p></li>
+<li><p><strong>_recvd_msg</strong> (<em>bytes</em>) – Content recieved from server is stored here</p></li>
+</ul>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt id="Message.Message.PROTOHEADER_LENGTH">
-<code class="sig-name descname">PROTOHEADER_LENGTH</code><em class="property"> = 2</em><a class="headerlink" href="#Message.Message.PROTOHEADER_LENGTH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<p>Constructor Object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn_socket</strong> (<em>socket.socket</em>) – Socket which has a connection with server</p></li>
+<li><p><strong>task</strong> (<em>str</em>) – Task to do. It can have values: login, signup, send_message</p></li>
+<li><p><strong>request</strong> (<em>str</em>) – Content to send to server</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="Message.Message._send_data_to_server">
+<code class="sig-name descname">_send_data_to_server</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._send_data_to_server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to send the string to the server. It sends content of _send_data_to_server to the server</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._recv_data_from_server">
+<code class="sig-name descname">_recv_data_from_server</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._recv_data_from_server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to recv data from server. Stores the bytes recieved in a variable named _recvd_msg.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em>) – Length of content to recieve from server</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._json_encode">
+<code class="sig-name descname">_json_encode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._json_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to encode dictionary to bytes object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>dict</em>) – dictionary to encode</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – Encoding to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Encoded obj</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._hash_password">
+<code class="sig-name descname">_hash_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">passwd</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._hash_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to salt and hash the password before sending to server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>passwd</strong> (<em>str</em>) – Password to be hashed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Transformed Password</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._create_login_request">
+<code class="sig-name descname">_create_login_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_login_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>The jsonheader has the following keys: |
+byteorder, request, content-length, content-encoding. The value for request is ‘login’ |
+The content has user id and password separated using ‘'</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message to send to server directly for login</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._create_signup_request">
+<code class="sig-name descname">_create_signup_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_signup_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>The jsonheader has the following keys: |
+byteorder, request, content-length, content-encoding. The value for request is ‘signup’ |
+The content has user id and password separated using ‘'</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message to send to server directly for login</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._login">
+<code class="sig-name descname">_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to help login into the system. This function sends the login details to the server |
+The function expects to recieve a response of size 2 from server which gives 0 if invalid id/password and 1 if successful login and 2 for any other case</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response from server converted to int</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._signup">
+<code class="sig-name descname">_signup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._signup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to help signup to make new account. This function sends the new user details to the server |
+The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if successful login and 2 for any other case</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response from server converted to int</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="Message.Message.processTask">
 <code class="sig-name descname">processTask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message.processTask" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Processes the task to do</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns int to represent result of the process. The details of return values are given in the corresponding functions handling the actions.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
