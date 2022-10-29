@@ -14,3 +14,5 @@
 \indexentry{app@\spxentry{app}!module@\spxentry{module}|hyperpage}{2}
 \indexentry{login() (in module app)@\spxentry{login()}\spxextra{in module app}|hyperpage}{2}
 \indexentry{signup() (in module app)@\spxentry{signup()}\spxextra{in module app}|hyperpage}{2}
+\indexentry{handleUserInput() (in module app)@\spxentry{handleUserInput()}\spxextra{in module app}|hyperpage}{3}
+\indexentry{handleMessageFromServer() (in module app)@\spxentry{handleMessageFromServer()}\spxextra{in module app}|hyperpage}{3}

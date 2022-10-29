@@ -20,6 +20,11 @@
     \subitem \spxentry{module}, \hyperpage{2}
 
   \indexspace
+  \bigletter H
+  \item \spxentry{handleMessageFromServer()}\spxextra{in module app}, \hyperpage{3}
+  \item \spxentry{handleUserInput()}\spxextra{in module app}, \hyperpage{3}
+
+  \indexspace
   \bigletter L
   \item \spxentry{login()}\spxextra{in module app}, \hyperpage{2}
 
