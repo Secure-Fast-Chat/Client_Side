@@ -1,5 +1,5 @@
 import Message
-import asyncio
+import selectors
 import getpass
 import socket
 
@@ -90,7 +90,19 @@ def signup(sock = None):
         raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
     ##############################################################################################
 
-    
+def handleUserInput():
+    """ This function is called when the user sends some input. This function does the work asked by user
+    """
+
+    #Pending Implementation
+    pass
+
+def handleMessageFromServer(socket):
+    """ This function is called when there is a message from server....
+    """
+
+    # Pending implementation
+    pass
 
 if __name__ == "__main__":
     conn_socket = None
@@ -119,3 +131,17 @@ if __name__ == "__main__":
     except:
         raise
 
+    # Setting up selectors for handling user-inputs and recieving messages
+    sel = selectors.DefaultSelector()
+    sel.register(0,selectors.EVENT_READ,data = 'user-input')
+    sel.register(conn_socket,selectors.EVENT_READ,data = 'socket')
+
+    # Loop for running the app
+    while True:
+        # Blocks until any input is recieved
+        events = sel.select(timeout = None)
+        for key,mask in events:
+            if(key.data == 'user-input'):
+                handleUserInput()
+            else:
+                handleMessageFromServer(key.fileobj)
