@@ -1,4 +1,5 @@
 import Message
+import asyncio
 import getpass
 import socket
 
@@ -89,6 +90,8 @@ def signup(sock = None):
         raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
     ##############################################################################################
 
+    
+
 if __name__ == "__main__":
     conn_socket = None
     # Try to login/signup
@@ -115,3 +118,4 @@ if __name__ == "__main__":
         exit()
     except:
         raise
+

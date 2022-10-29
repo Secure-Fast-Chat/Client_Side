@@ -42,7 +42,7 @@ class Message:
         """
         left_message = self._data_to_send
         while left_message:
-            bytes_sent = self.conn_socket.send(left_message)
+            bytes_sent = self.socket.send(left_message)
             left_message = left_message[bytes_sent:]
         return
 
@@ -53,11 +53,7 @@ class Message:
         :type size: int
         """
 
-        self._recvd_msg = b''
-        msg_length_left = size
-        while True:
-            self._recvd_msg += self.socket.recv(msg_length_left)
-            msg_length_left = size - len(self._recvd_msg)
+        self._recvd_msg = self.socket.recv(size)
         return
 
     def _json_encode(self, obj, encoding):
