@@ -68,6 +68,18 @@ class Message:
 
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
 
+    def _json_decode(self, obj, encoding):
+        """Function to decode bytes object to dictionary
+
+        :param obj: Encoded json data
+        :type obj: bytes
+        :param encoding: Encoding used
+        :type encoding: str
+        :return: Decoded json object
+        :rtype: json"""
+
+        return json.load(obj.decode(encoding), ensure_ascii=False)
+
     def _hash_password(self,passwd):
         """Function to salt and hash the password before sending to server
 
@@ -82,6 +94,22 @@ class Message:
         ###################################################
         return passwd
 
+    def _encode(self,text,key):
+        """ Function to encode the text using key from server
+
+        :param text: string to encode
+        :type text: str
+        :param key: key for encryption
+        :type key: str
+        :return: Encoded text
+        :rtype: str
+        """
+
+        ###################################################
+        ########## Pending Implementation #################
+        ###################################################
+        return passwd
+    
     def _create_login_request(self):
         """ The jsonheader has the following keys: |
         byteorder, request, content-length, content-encoding. The value for request is 'login' |
@@ -107,10 +135,34 @@ class Message:
         # struct.unpack('>H',proto_header)[0]
         return proto_header + encoded_json_header + content
 
-    def _create_signup_request(self):
+    def _create_signuppass_request(self):
         """ The jsonheader has the following keys: |
-        byteorder, request, content-length, content-encoding. The value for request is 'signup' |
-        The content has user id and password separated using '\0\0\0\0\0\0\0\0'
+        byteorder, request, content-length, content-encoding. The value for request is 'signuppass' |
+        The content has encoded password
+
+        :return: Message to send to server directly for login
+        :rtype: bytes
+        """
+
+        global ENCODING_USED
+        password = self._hash_password(self.request_content['password'])
+        content = bytes(self._encode(password,self.request_content['key']), encoding=ENCODING_USED)
+        jsonheader = {
+            "byteorder": sys.byteorder,
+            "request" : 'signuppass',
+            'content-length' : len(content),
+            "content-encoding" : ENCODING_USED,
+        }
+        encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        proto_header = struct.pack('>H',len(encoded_json_header))
+        # Command to use for unpacking of proto_header: 
+        # struct.unpack('>H',proto_header)[0]
+        return proto_header + encoded_json_header + content
+
+    def _create_signupuid_request(self):
+        """ The jsonheader has the following keys: |
+        byteorder, request, content-length, content-encoding. The value for request is 'signupuid' |
+        The content has user id.
 
         :return: Message to send to server directly for login
         :rtype: bytes
@@ -118,11 +170,10 @@ class Message:
 
         global ENCODING_USED
         userid = self.request_content['userid']
-        password = self._hash_password(self.request_content['password'])
-        content = bytes(userid + '\0'*8 + password, encoding=ENCODING_USED)
+        content = bytes(userid , encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
-            "request" : 'signup',
+            "request" : 'signupuid',
             'content-length' : len(content),
             "content-encoding" : ENCODING_USED,
         }
@@ -146,19 +197,37 @@ class Message:
         self._recv_data_from_server(2)
         return struct.unpack('>H',self._recvd_msg)[0]
 
-    def _signup(self):
-        """ Function to help signup to make new account. This function sends the new user details to the server |
-        The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if successful login and 2 for any other case
+    def _signuppass(self):
+        """ Function to save account password at server
+        The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 for success
 
         :return: Response from server converted to int
         :rtype: int
         """
 
-        self._data_to_send = self._create_signup_request()
+        self._data_to_send = self._create_signuppass_request()
         self._send_data_to_server()
         # Recieve login result from server
         self._recv_data_from_server(2)
         return struct.unpack('>H',self._recvd_msg)[0]
+
+    def _signupuid(self):
+        """ Function to help signup to make new account. This function sends the new user userid to the server |
+        The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if username is available
+
+        :return: Response from server converted to int
+        :rtype: int
+        """
+
+        self._data_to_send = self._create_signupuid_request()
+        self._send_data_to_server()
+        # Recieve login result from server
+        len_header = struct.unpack('>H',self._recv_data_from_server(2))[0]
+        header = self._decode_json(self._recv_data_from_server(len_header))
+        if header['availability'] == 0:
+            return 0
+        key = header['key']
+        return 1,key
 
     def processTask(self):
         """ Processes the task to do
@@ -168,5 +237,7 @@ class Message:
         """
         if self.task == 'login':
             return self._login()
-        if self.task == 'signup':
-            return self._signup()
+        if self.task == 'signupuid':
+            return self._signupuid()
+        if self.task == 'signuppass':
+            return self._signuppass()

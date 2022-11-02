@@ -57,12 +57,11 @@ def signup(sock = None):
 
     :return: Socket with which user is connected to server
     :rtype: socket.socket"""
+
     username = input("Please enter username: ")
-    password1 = getpass.getpass(prompt = "Enter Password: ")
-    password2 = getpass.getpass(prompt = "Re-Enter Password: ")
-    if password1 != password2:
-        print("Password didn't match. Try Again!")
-        return signup()
+    print("Checking for availability of Username ... ")
+    message = Message.Message(sock,'signupuid',{'userid' : username})
+    response = message.processTask()
     # Do signup work
     print("  Connecting to Server...")
     if not sock:
@@ -73,12 +72,21 @@ def signup(sock = None):
             print(f"\nUnable to Connect to server on {host}:{port}")
             exit()
 
-    # Use message class for sending request for signup
-    message = Message.Message(sock,'signup',{'userid' : username , 'password' : password1})
-    response = message.processTask()
     if response == 0:
         print("This username is already taken. Sorry! Please try again with a different username")
-        return signup()
+        return signup(sock)
+    
+    return_code, key = response
+    print("The username you requested for is available")
+    password1 = getpass.getpass(prompt = "Enter Password: ")
+    password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+    while password1 != password2:
+        print("Passwords didn't match. Try Again!")
+        password1 = getpass.getpass(prompt = "Enter Password: ")
+        password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+    # Use message class for sending password for signup
+    message = Message.Message(sock,'signuppass',{'password' : password1,'key' = key})
+    response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")
         return login(sock)
