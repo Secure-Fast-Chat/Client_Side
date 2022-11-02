@@ -98,6 +98,26 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="Message.Message._json_decode">
+<code class="sig-name descname">_json_decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span></em>, <em class="sig-param"><span class="n">encoding</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._json_decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to decode bytes object to dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>bytes</em>) – Encoded json data</p></li>
+<li><p><strong>encoding</strong> (<em>str</em>) – Encoding used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Decoded json object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>json</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="Message.Message._hash_password">
 <code class="sig-name descname">_hash_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">passwd</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._hash_password" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to salt and hash the password before sending to server</p>
@@ -115,11 +135,31 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="Message.Message._create_login_request">
-<code class="sig-name descname">_create_login_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_login_request" title="Permalink to this definition">¶</a></dt>
+<dt id="Message.Message._encode">
+<code class="sig-name descname">_encode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to encode the text using key from server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – string to encode</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – key for encryption</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Encoded text</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._create_loginpass_request">
+<code class="sig-name descname">_create_loginpass_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_loginpass_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>The jsonheader has the following keys: |
-byteorder, request, content-length, content-encoding. The value for request is ‘login’ |
-The content has user id and password separated using ‘'</p>
+byteorder, request, content-length, content-encoding. The value for request is ‘loginpass’ |
+The content has salted password</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Message to send to server directly for login</p>
@@ -131,11 +171,43 @@ The content has user id and password separated using ‘'</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="Message.Message._create_signup_request">
-<code class="sig-name descname">_create_signup_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_signup_request" title="Permalink to this definition">¶</a></dt>
+<dt id="Message.Message._create_loginuid_request">
+<code class="sig-name descname">_create_loginuid_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_loginuid_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>The jsonheader has the following keys: |
-byteorder, request, content-length, content-encoding. The value for request is ‘signup’ |
-The content has user id and password separated using ‘'</p>
+byteorder, request, content-length, content-encoding. The value for request is ‘loginuid’ |
+The content has user id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message to send to server directly for login</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._create_signuppass_request">
+<code class="sig-name descname">_create_signuppass_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_signuppass_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>The jsonheader has the following keys: |
+byteorder, request, content-length, content-encoding. The value for request is ‘signuppass’ |
+The content has encoded password</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message to send to server directly for login</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._create_signupuid_request">
+<code class="sig-name descname">_create_signupuid_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._create_signupuid_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>The jsonheader has the following keys: |
+byteorder, request, content-length, content-encoding. The value for request is ‘signupuid’ |
+The content has user id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Message to send to server directly for login</p>
@@ -150,7 +222,7 @@ The content has user id and password separated using ‘'</p>
 <dt id="Message.Message._login">
 <code class="sig-name descname">_login</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to help login into the system. This function sends the login details to the server |
-The function expects to recieve a response of size 2 from server which gives 0 if invalid id/password and 1 if successful login and 2 for any other case</p>
+The function expects to recieve a response of size 2 from server which gives 0 if success and 1 if wrong uid and 2 for wrong passwd</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Response from server converted to int</p>
@@ -162,10 +234,25 @@ The function expects to recieve a response of size 2 from server which gives 0 i
 </dd></dl>
 
 <dl class="py method">
-<dt id="Message.Message._signup">
-<code class="sig-name descname">_signup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._signup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to help signup to make new account. This function sends the new user details to the server |
-The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if successful login and 2 for any other case</p>
+<dt id="Message.Message._signuppass">
+<code class="sig-name descname">_signuppass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._signuppass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to save account password at server
+The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 for success</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response from server converted to int</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="Message.Message._signupuid">
+<code class="sig-name descname">_signupuid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Message.Message._signupuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to help signup to make new account. This function sends the new user userid to the server |
+The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if username is available</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Response from server converted to int</p>

@@ -86,7 +86,7 @@ def signup(sock = None):
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
     # Use message class for sending password for signup
-    message = Message.Message(sock,'signuppass',{'password' : password1,'key' = key})
+    message = Message.Message(sock,'signuppass',{'password' : password1,'key' : key})
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")

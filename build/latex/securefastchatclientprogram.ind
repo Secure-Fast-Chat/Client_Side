@@ -5,19 +5,24 @@
 \let\spxextra \sphinxstyleindexextra
 
   \bigletter {\sphinxsymbolsname}
-  \item \spxentry{\_create\_login\_request()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_create\_signup\_request()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_hash\_password()}\spxextra{Message.Message method}, \hyperpage{1}
+  \item \spxentry{\_create\_loginpass\_request()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_create\_loginuid\_request()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_create\_signupuid\_request()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_encode()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_hash\_password()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_json\_decode()}\spxextra{Message.Message method}, \hyperpage{1}
   \item \spxentry{\_json\_encode()}\spxextra{Message.Message method}, \hyperpage{1}
   \item \spxentry{\_login()}\spxextra{Message.Message method}, \hyperpage{2}
   \item \spxentry{\_recv\_data\_from\_server()}\spxextra{Message.Message method}, \hyperpage{1}
   \item \spxentry{\_send\_data\_to\_server()}\spxextra{Message.Message method}, \hyperpage{1}
-  \item \spxentry{\_signup()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_signuppass()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_signupuid()}\spxextra{Message.Message method}, \hyperpage{3}
 
   \indexspace
   \bigletter A
   \item \spxentry{app}
-    \subitem \spxentry{module}, \hyperpage{2}
+    \subitem \spxentry{module}, \hyperpage{3}
 
   \indexspace
   \bigletter H
@@ -26,7 +31,7 @@
 
   \indexspace
   \bigletter L
-  \item \spxentry{login()}\spxextra{in module app}, \hyperpage{2}
+  \item \spxentry{login()}\spxextra{in module app}, \hyperpage{3}
 
   \indexspace
   \bigletter M
@@ -34,15 +39,15 @@
     \subitem \spxentry{module}, \hyperpage{1}
   \item \spxentry{Message}\spxextra{class in Message}, \hyperpage{1}
   \item \spxentry{module}
-    \subitem \spxentry{app}, \hyperpage{2}
+    \subitem \spxentry{app}, \hyperpage{3}
     \subitem \spxentry{Message}, \hyperpage{1}
 
   \indexspace
   \bigletter P
-  \item \spxentry{processTask()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{processTask()}\spxextra{Message.Message method}, \hyperpage{3}
 
   \indexspace
   \bigletter S
-  \item \spxentry{signup()}\spxextra{in module app}, \hyperpage{2}
+  \item \spxentry{signup()}\spxextra{in module app}, \hyperpage{3}
 
 \end{sphinxtheindex}

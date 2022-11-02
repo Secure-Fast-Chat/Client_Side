@@ -74,7 +74,7 @@
 
 
 \title{Secure Fast Chat: Client Program}
-\date{Oct 30, 2022}
+\date{Nov 02, 2022}
 \release{}
 \author{Khushang Singla \textbackslash{}and Mridul Agarwal \textbackslash{}and Arhaan Ahmad}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -184,6 +184,31 @@ bytes
 
 \end{fulllineitems}
 
+\index{\_json\_decode() (Message.Message method)@\spxentry{\_json\_decode()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._json_decode}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_json\_decode}}}{\emph{\DUrole{n}{obj}}, \emph{\DUrole{n}{encoding}}}{}
+Function to decode bytes object to dictionary
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{obj}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Encoded json data
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{encoding}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Encoding used
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+Decoded json object
+
+\item[{Return type}] \leavevmode
+json
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{\_hash\_password() (Message.Message method)@\spxentry{\_hash\_password()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
@@ -203,13 +228,38 @@ string
 
 \end{fulllineitems}
 
-\index{\_create\_login\_request() (Message.Message method)@\spxentry{\_create\_login\_request()}\spxextra{Message.Message method}}
+\index{\_encode() (Message.Message method)@\spxentry{\_encode()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_login_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_login\_request}}}{}{}
+\phantomsection\label{\detokenize{Message:Message.Message._encode}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encode}}}{\emph{\DUrole{n}{text}}, \emph{\DUrole{n}{key}}}{}
+Function to encode the text using key from server
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{text}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} string to encode
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{key}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} key for encryption
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+Encoded text
+
+\item[{Return type}] \leavevmode
+str
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_create\_loginpass\_request() (Message.Message method)@\spxentry{\_create\_loginpass\_request()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_loginpass_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_loginpass\_request}}}{}{}
 The jsonheader has the following keys: |
-byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘login’ |
-The content has user id and password separated using ‘\textquotesingle{}
+byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘loginpass’ |
+The content has salted password
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
 Message to send to server directly for login
@@ -221,13 +271,49 @@ bytes
 
 \end{fulllineitems}
 
-\index{\_create\_signup\_request() (Message.Message method)@\spxentry{\_create\_signup\_request()}\spxextra{Message.Message method}}
+\index{\_create\_loginuid\_request() (Message.Message method)@\spxentry{\_create\_loginuid\_request()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_signup_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signup\_request}}}{}{}
+\phantomsection\label{\detokenize{Message:Message.Message._create_loginuid_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_loginuid\_request}}}{}{}
 The jsonheader has the following keys: |
-byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘signup’ |
-The content has user id and password separated using ‘\textquotesingle{}
+byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘loginuid’ |
+The content has user id.
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Message to send to server directly for login
+
+\item[{Return type}] \leavevmode
+bytes
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_create\_signuppass\_request() (Message.Message method)@\spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_signuppass_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signuppass\_request}}}{}{}
+The jsonheader has the following keys: |
+byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘signuppass’ |
+The content has encoded password
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Message to send to server directly for login
+
+\item[{Return type}] \leavevmode
+bytes
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_create\_signupuid\_request() (Message.Message method)@\spxentry{\_create\_signupuid\_request()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_signupuid_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signupuid\_request}}}{}{}
+The jsonheader has the following keys: |
+byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘signupuid’ |
+The content has user id.
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
 Message to send to server directly for login
@@ -244,7 +330,7 @@ bytes
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{Message:Message.Message._login}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_login}}}{}{}
 Function to help login into the system. This function sends the login details to the server |
-The function expects to recieve a response of size 2 from server which gives 0 if invalid id/password and 1 if successful login and 2 for any other case
+The function expects to recieve a response of size 2 from server which gives 0 if success and 1 if wrong uid and 2 for wrong passwd
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
 Response from server converted to int
@@ -256,12 +342,29 @@ int
 
 \end{fulllineitems}
 
-\index{\_signup() (Message.Message method)@\spxentry{\_signup()}\spxextra{Message.Message method}}
+\index{\_signuppass() (Message.Message method)@\spxentry{\_signuppass()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._signup}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signup}}}{}{}
-Function to help signup to make new account. This function sends the new user details to the server |
-The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if successful login and 2 for any other case
+\phantomsection\label{\detokenize{Message:Message.Message._signuppass}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signuppass}}}{}{}
+Function to save account password at server
+The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 for success
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Response from server converted to int
+
+\item[{Return type}] \leavevmode
+int
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_signupuid() (Message.Message method)@\spxentry{\_signupuid()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._signupuid}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signupuid}}}{}{}
+Function to help signup to make new account. This function sends the new user userid to the server |
+The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if username is available
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
 Response from server converted to int
