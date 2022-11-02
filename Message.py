@@ -110,10 +110,10 @@ class Message:
         ###################################################
         return passwd
     
-    def _create_login_request(self):
+    def _create_loginpass_request(self):
         """ The jsonheader has the following keys: |
-        byteorder, request, content-length, content-encoding. The value for request is 'login' |
-        The content has user id and password separated using '\0\0\0\0\0\0\0\0'
+        byteorder, request, content-length, content-encoding. The value for request is 'loginpass' |
+        The content has salted password
 
         :return: Message to send to server directly for login
         :rtype: bytes
@@ -121,11 +121,36 @@ class Message:
 
         global ENCODING_USED
         userid = self.request_content['userid']
-        password = self._hash_password(self.request_content['password'])
-        content = bytes(userid + '\0'*8 + password,encoding=ENCODING_USED)
+        hashed_password = self._hash_password(self.request_content['password'])
+        salted_password = seld._hash_password(hashed_password + logintoken)
+        content = bytes(salted_password,encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
-            "request" : 'login',
+            "request" : 'loginpass',
+            'content-length' : len(content),
+            "content-encoding" : ENCODING_USED,
+        }
+        encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        proto_header = struct.pack('>H',len(encoded_json_header))
+        # Command to use for unpacking of proto_header: 
+        # struct.unpack('>H',proto_header)[0]
+        return proto_header + encoded_json_header + content
+
+    def _create_loginuid_request(self):
+        """ The jsonheader has the following keys: |
+        byteorder, request, content-length, content-encoding. The value for request is 'loginuid' |
+        The content has user id.
+
+        :return: Message to send to server directly for login
+        :rtype: bytes
+        """
+
+        global ENCODING_USED
+        userid = self.request_content['userid']
+        content = bytes(userid ,encoding=ENCODING_USED)
+        jsonheader = {
+            "byteorder": sys.byteorder,
+            "request" : 'loginuid',
             'content-length' : len(content),
             "content-encoding" : ENCODING_USED,
         }
@@ -185,17 +210,24 @@ class Message:
 
     def _login(self):
         """ Function to help login into the system. This function sends the login details to the server |
-        The function expects to recieve a response of size 2 from server which gives 0 if invalid id/password and 1 if successful login and 2 for any other case
+        The function expects to recieve a response of size 2 from server which gives 0 if success and 1 if wrong uid and 2 for wrong passwd
 
         :return: Response from server converted to int
         :rtype: int
         """
 
-        self._data_to_send = self._create_login_request()
+        self._data_to_send = self._create_loginuid_request()
         self._send_data_to_server()
         # Recieve login result from server
-        self._recv_data_from_server(2)
-        return struct.unpack('>H',self._recvd_msg)[0]
+        header_length = struct.unpack('>H',self._recv_data_from_server(2))[0]
+        header = self._json_decode(self._recv_data_from_server(header_length))
+        if not header['uid_found']:
+            return 2
+        logintoken = header['logintoken']
+        self._data_to_send = self._create_loginpass_request(logintoken)
+        self._send_data_to_server()
+        response = self._recv_data_from_server(2)
+        return struct.unpack('>H',response)
 
     def _signuppass(self):
         """ Function to save account password at server
@@ -223,7 +255,7 @@ class Message:
         self._send_data_to_server()
         # Recieve login result from server
         len_header = struct.unpack('>H',self._recv_data_from_server(2))[0]
-        header = self._decode_json(self._recv_data_from_server(len_header))
+        header = self._json_decode(self._recv_data_from_server(len_header))
         if header['availability'] == 0:
             return 0
         key = header['key']

@@ -22,7 +22,8 @@ def login(sock = None):
     """Function to help user log in to the app
 
     :return: Socket with which user is connected to server
-    :rtype: socket.socket"""
+    :rtype: socket.socket
+    """
 
     uid = input("Enter Username: ")
     passwd = getpass.getpass(prompt = "Enter Password: ")
@@ -38,14 +39,14 @@ def login(sock = None):
     # Use message class for sending request
     message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd})
     response = message.processTask()
-    if(response == 1):
+    if(response == 0):
         print("Successfully Logged In")
         return sock
-    elif response == 0:
-        print("Invalid User Id or Password. Try Again")
+    elif response == 1:
+        print("Invalid User Id. Try Again")
         return login()
     elif response == 2:
-        print("Unable to Login. Please Try Again.")
+        print("Invalid Password. Please Try Again.")
         return login()
     ##############################################################################################
     else:
