@@ -2,6 +2,7 @@ import Message
 import selectors
 import getpass
 import socket
+import userInputHandler
 
 start_up_banner = """
 ***********************************************************************
@@ -99,19 +100,12 @@ def signup(sock = None):
         raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
     ##############################################################################################
 
-def handleUserInput():
-    """ This function is called when the user sends some input. This function does the work asked by user
-    """
-
-    #Pending Implementation
-    pass
-
 def handleMessageFromServer(socket):
     """ This function is called when there is a message from server....
     """
 
     # Pending implementation
-    pass
+    print('\033[1;2H'+msg+'\033[10;1H')
 
 if __name__ == "__main__":
     conn_socket = None
@@ -151,6 +145,6 @@ if __name__ == "__main__":
         events = sel.select(timeout = None)
         for key,mask in events:
             if(key.data == 'user-input'):
-                handleUserInput()
+                userInputHandler.handleUserInput()
             else:
                 handleMessageFromServer(key.fileobj)
