@@ -78,7 +78,7 @@ class Message:
         :return: Decoded json object
         :rtype: json"""
 
-        return json.load(obj.decode(encoding), ensure_ascii=False)
+        return json.loads(obj.decode(encoding))
 
     def _hash_password(self,passwd):
         """Function to salt and hash the password before sending to server
@@ -110,7 +110,7 @@ class Message:
         ###################################################
         return passwd
     
-    def _create_loginpass_request(self):
+    def _create_loginpass_request(self,logintoken):
         """ The jsonheader has the following keys: |
         byteorder, request, content-length, content-encoding. The value for request is 'loginpass' |
         The content has salted password
@@ -122,7 +122,7 @@ class Message:
         global ENCODING_USED
         userid = self.request_content['userid']
         hashed_password = self._hash_password(self.request_content['password'])
-        salted_password = seld._hash_password(hashed_password + logintoken)
+        salted_password = self._hash_password(hashed_password + logintoken)
         content = bytes(salted_password,encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
@@ -219,15 +219,17 @@ class Message:
         self._data_to_send = self._create_loginuid_request()
         self._send_data_to_server()
         # Recieve login result from server
-        header_length = struct.unpack('>H',self._recv_data_from_server(2))[0]
-        header = self._json_decode(self._recv_data_from_server(header_length))
+        self._recv_data_from_server(2)
+        header_length = struct.unpack('>H',self._recvd_msg)[0]
+        self._recv_data_from_server(header_length)
+        header = self._json_decode(self._recvd_msg,ENCODING_USED)
         if not header['uid_found']:
             return 2
         logintoken = header['logintoken']
         self._data_to_send = self._create_loginpass_request(logintoken)
         self._send_data_to_server()
-        response = self._recv_data_from_server(2)
-        return struct.unpack('>H',response)
+        self._recv_data_from_server(2)
+        return struct.unpack('>H',self._recvd_msg)
 
     def _signuppass(self):
         """ Function to save account password at server
