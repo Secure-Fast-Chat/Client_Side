@@ -51,6 +51,7 @@ def login(sock = None):
         return login()
     ##############################################################################################
     else:
+        print(response)
         raise Exception("Why this Error in app.py -> login() ?") # Remove this if everything works correctly
     ##############################################################################################
 

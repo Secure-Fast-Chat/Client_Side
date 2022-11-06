@@ -229,7 +229,7 @@ class Message:
         self._data_to_send = self._create_loginpass_request(logintoken)
         self._send_data_to_server()
         self._recv_data_from_server(2)
-        return struct.unpack('>H',self._recvd_msg)
+        return struct.unpack('>H',self._recvd_msg)[0]
 
     def _signuppass(self):
         """ Function to save account password at server
@@ -256,8 +256,10 @@ class Message:
         self._data_to_send = self._create_signupuid_request()
         self._send_data_to_server()
         # Recieve login result from server
-        len_header = struct.unpack('>H',self._recv_data_from_server(2))[0]
-        header = self._json_decode(self._recv_data_from_server(len_header))
+        self._recv_data_from_server(2)
+        len_header = struct.unpack('>H',self._recvd_msg)[0]
+        self._recv_data_from_server(len_header)
+        header = self._json_decode(self._recvd_msg)
         if header['availability'] == 0:
             return 0
         key = header['key']
