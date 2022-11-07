@@ -108,7 +108,7 @@ class Message:
         ###################################################
         ########## Pending Implementation #################
         ###################################################
-        return passwd
+        return text
     
     def _create_loginpass_request(self,logintoken):
         """ The jsonheader has the following keys: |
@@ -259,7 +259,7 @@ class Message:
         self._recv_data_from_server(2)
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
-        header = self._json_decode(self._recvd_msg)
+        header = self._json_decode(self._recvd_msg, ENCODING_USED)
         if header['availability'] == 0:
             return 0
         key = header['key']

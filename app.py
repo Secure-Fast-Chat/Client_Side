@@ -61,12 +61,6 @@ def signup(sock = None):
     :return: Socket with which user is connected to server
     :rtype: socket.socket"""
 
-    username = input("Please enter username: ")
-    print("Checking for availability of Username ... ")
-    message = Message.Message(sock,'signupuid',{'userid' : username})
-    response = message.processTask()
-    # Do signup work
-    print("  Connecting to Server...")
     if not sock:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -74,6 +68,12 @@ def signup(sock = None):
         except ConnectionRefusedError:
             print(f"\nUnable to Connect to server on {host}:{port}")
             exit()
+    username = input("Please enter username: ")
+    print("Checking for availability of Username ... ")
+    message = Message.Message(sock,'signupuid',{'userid' : username})
+    response = message.processTask()
+    # Do signup work
+    print("  Connecting to Server...")
 
     if response == 0:
         print("This username is already taken. Sorry! Please try again with a different username")
