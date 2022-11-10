@@ -122,7 +122,7 @@ class Message:
         global ENCODING_USED
         userid = self.request_content['userid']
         # hashed_password = self._hash_password(self.request_content['password'])
-        content = bytes(self.request['password'],encoding=ENCODING_USED)
+        content = bytes(self.request_content['password'],encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'loginpass',
@@ -170,7 +170,7 @@ class Message:
 
         global ENCODING_USED
         # password = self._hash_password(self.request_content['password'])
-        content = bytes(self._encode(request_headers["password"]), encoding=ENCODING_USED) 
+        content = bytes(self._encode(self.request_content["password"]), encoding=ENCODING_USED) 
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'signuppass',
