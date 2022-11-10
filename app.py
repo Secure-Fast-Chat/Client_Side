@@ -3,6 +3,8 @@ import selectors
 import getpass
 import socket
 import userInputHandler
+import nacl.utils
+from nacl.public import PrivateKey, Box
 
 start_up_banner = """
 ***********************************************************************
@@ -79,7 +81,7 @@ def signup(sock = None):
         print("This username is already taken. Sorry! Please try again with a different username")
         return signup(sock)
     
-    return_code, key = response
+    return_code, server_publickey = response
     print("The username you requested for is available")
     password1 = getpass.getpass(prompt = "Enter Password: ")
     password2 = getpass.getpass(prompt = "Re-Enter Password: ")
@@ -87,8 +89,13 @@ def signup(sock = None):
         print("Passwords didn't match. Try Again!")
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+
+    myprivatekey = PrivateKey.generate()
+    mypublickey = myprivatekey.public_key
+    myBox = Box(myprivatekey, server_publickey)
+    encryptedPass = myBox.encrypt(password1)
     # Use message class for sending password for signup
-    message = Message.Message(sock,'signuppass',{'password' : password1,'key' : key})
+    message = Message.Message(sock,'signuppass',{'password' : encryptedPass,'key' : mypublickey})
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")
