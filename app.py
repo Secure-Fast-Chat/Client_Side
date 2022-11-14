@@ -4,8 +4,13 @@ import selectors
 import getpass
 import socket
 import userInputHandler
+import nacl.utils
+from nacl.public import PrivateKey, Box
+import struct
+import json
 
-start_up_banner = """***********************************************************************
+start_up_banner = """
+***********************************************************************
 **************************Welcome to FastChat**************************
 ***********************************************************************
            -Developed by: Khushang Singla, Mridul Agarwal, Arhaan Ahmad
@@ -14,10 +19,42 @@ start_up_banner = """***********************************************************
 host = "127.0.0.1"
 port = 8000
 
+ENCODING_USED = "utf-8" 
+
 welcome_message = """    1. Login using and existing account
     2. Sign Up to make a new account
     3. Quit
       Enter Your Command(1/2/3): """
+
+serverkey = None
+privatekey = None
+def connectToServer(sock):
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
+    try:
+        sock.connect((host,port))
+    except ConnectionRefusedError:
+        print(f"\nUnable to Connect to server on {host}:{port}")
+        exit()
+    # Receive the public key of the server
+    # First the server sends their key, then we send ours
+    global privatekey
+    privatekey = PrivateKey.generate()
+    myPublicKey = privatekey.public_key
+    message = Message.Message(sock,'keyex',{'key' : myPublicKey}) 
+    message.processTask()
+
+    data = sock.recv(2)
+    
+    len_header = struct.unpack('>H',data)[0]
+    data = sock.recv(len_header)
+    header = json.loads(data.decode(ENCODING_USED))
+    if header["request"] != "keyex":
+        print("Error occurred while connecting")
+        exit()
+    global serverkey
+    serverkey = header['key']
+
+
 
 def login(sock = None):
     """Function to help user log in to the app
@@ -79,7 +116,7 @@ def signup(sock = None):
         print("This username is already taken. Sorry! Please try again with a different username")
         return signup(sock)
     
-    return_code, key = response
+    return_code, server_publickey = response
     print("The username you requested for is available")
     password1 = getpass.getpass(prompt = "Enter Password: ")
     password2 = getpass.getpass(prompt = "Re-Enter Password: ")
@@ -87,8 +124,8 @@ def signup(sock = None):
         print("Passwords didn't match. Try Again!")
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
-    # Use message class for sending password for signup
-    message = Message.Message(sock,'signuppass',{'password' : password1,'key' : key})
+
+    message = Message.Message(sock,'signuppass',{'password' :password1})
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")

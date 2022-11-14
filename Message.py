@@ -46,7 +46,7 @@ class Message:
             left_message = left_message[bytes_sent:]
         return
 
-    def _recv_data_from_server(self,size):
+    def _recv_data_from_server(self,size, authenticated=True):
         """ Function to recv data from server. Stores the bytes recieved in a variable named _recvd_msg.
 
         :param size: Length of content to recieve from server
@@ -108,12 +108,12 @@ class Message:
         ###################################################
         ########## Pending Implementation #################
         ###################################################
+        # Commented out instances of this for now, because we are sending the plain text password to the server for now, remember to uncomment them if we change minds
         return text
     
-    def _create_loginpass_request(self,logintoken):
+    def _create_loginpass_request(self):
         """ The jsonheader has the following keys: |
-        byteorder, request, content-length, content-encoding. The value for request is 'loginpass' |
-        The content has salted password
+        byteorder, request, content-length, content-encoding. 
 
         :return: Message to send to server directly for login
         :rtype: bytes
@@ -121,9 +121,8 @@ class Message:
 
         global ENCODING_USED
         userid = self.request_content['userid']
-        hashed_password = self._hash_password(self.request_content['password'])
-        salted_password = self._hash_password(hashed_password + logintoken)
-        content = bytes(salted_password,encoding=ENCODING_USED)
+        # hashed_password = self._hash_password(self.request_content['password'])
+        content = bytes(self.request_content['password'],encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'loginpass',
@@ -170,8 +169,8 @@ class Message:
         """
 
         global ENCODING_USED
-        password = self._hash_password(self.request_content['password'])
-        content = bytes(self._encode(password,self.request_content['key']), encoding=ENCODING_USED)
+        # password = self._hash_password(self.request_content['password'])
+        content = bytes(self._encode(self.request_content["password"]), encoding=ENCODING_USED) 
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'signuppass',
@@ -265,6 +264,24 @@ class Message:
         key = header['key']
         return 1,key
 
+    def _keyex(self):
+        global ENCODING_USED
+        publickey = self.request_content['key']
+        jsonheader = {
+            "byteorder": sys.byteorder,
+            "request" : 'keyex',
+            "key": publickey,
+            "content-encoding" : ENCODING_USED,
+            
+        }
+        encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        proto_header = struct.pack('>H',len(encoded_json_header))
+        # Command to use for unpacking of proto_header: 
+        # struct.unpack('>H',proto_header)[0]
+        self._data_to_send = proto_header + encoded_json_header # Not sending any content since the data is in the header
+        self._send_data_to_server()
+ 
+
     def processTask(self):
         """ Processes the task to do
 
@@ -277,3 +294,5 @@ class Message:
             return self._signupuid()
         if self.task == 'signuppass':
             return self._signuppass()
+        if self.task == "keyex":
+            return self._keyex()
