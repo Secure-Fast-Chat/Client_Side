@@ -1,11 +1,11 @@
+import os
 import Message
 import selectors
 import getpass
 import socket
 import userInputHandler
 
-start_up_banner = """
-***********************************************************************
+start_up_banner = """***********************************************************************
 **************************Welcome to FastChat**************************
 ***********************************************************************
            -Developed by: Khushang Singla, Mridul Agarwal, Arhaan Ahmad
@@ -109,6 +109,7 @@ def handleMessageFromServer(socket):
     print('\033[1;2H'+msg+'\033[10;1H')
 
 if __name__ == "__main__":
+    os.system('clear')
     conn_socket = None
     # Try to login/signup
     try:
