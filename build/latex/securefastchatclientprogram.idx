@@ -7,17 +7,24 @@
 \indexentry{\_json\_decode() (Message.Message method)@\spxentry{\_json\_decode()}\spxextra{Message.Message method}|hyperpage}{1}
 \indexentry{\_hash\_password() (Message.Message method)@\spxentry{\_hash\_password()}\spxextra{Message.Message method}|hyperpage}{2}
 \indexentry{\_encode() (Message.Message method)@\spxentry{\_encode()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{\_encrypt() (Message.Message method)@\spxentry{\_encrypt()}\spxextra{Message.Message method}|hyperpage}{2}
 \indexentry{\_create\_loginpass\_request() (Message.Message method)@\spxentry{\_create\_loginpass\_request()}\spxextra{Message.Message method}|hyperpage}{2}
 \indexentry{\_create\_loginuid\_request() (Message.Message method)@\spxentry{\_create\_loginuid\_request()}\spxextra{Message.Message method}|hyperpage}{2}
 \indexentry{\_create\_signuppass\_request() (Message.Message method)@\spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}|hyperpage}{2}
 \indexentry{\_create\_signupuid\_request() (Message.Message method)@\spxentry{\_create\_signupuid\_request()}\spxextra{Message.Message method}|hyperpage}{2}
-\indexentry{\_login() (Message.Message method)@\spxentry{\_login()}\spxextra{Message.Message method}|hyperpage}{2}
+\indexentry{\_login() (Message.Message method)@\spxentry{\_login()}\spxextra{Message.Message method}|hyperpage}{3}
 \indexentry{\_signuppass() (Message.Message method)@\spxentry{\_signuppass()}\spxextra{Message.Message method}|hyperpage}{3}
 \indexentry{\_signupuid() (Message.Message method)@\spxentry{\_signupuid()}\spxextra{Message.Message method}|hyperpage}{3}
+\indexentry{\_keyex() (Message.Message method)@\spxentry{\_keyex()}\spxextra{Message.Message method}|hyperpage}{3}
+\indexentry{\_recvmsg() (Message.Message method)@\spxentry{\_recvmsg()}\spxextra{Message.Message method}|hyperpage}{3}
+\indexentry{\_sendmsg() (Message.Message method)@\spxentry{\_sendmsg()}\spxextra{Message.Message method}|hyperpage}{3}
+\indexentry{\_create\_group\_key() (Message.Message method)@\spxentry{\_create\_group\_key()}\spxextra{Message.Message method}|hyperpage}{3}
+\indexentry{\_create\_grp() (Message.Message method)@\spxentry{\_create\_grp()}\spxextra{Message.Message method}|hyperpage}{3}
 \indexentry{processTask() (Message.Message method)@\spxentry{processTask()}\spxextra{Message.Message method}|hyperpage}{3}
-\indexentry{module@\spxentry{module}!app@\spxentry{app}|hyperpage}{3}
-\indexentry{app@\spxentry{app}!module@\spxentry{module}|hyperpage}{3}
-\indexentry{login() (in module app)@\spxentry{login()}\spxextra{in module app}|hyperpage}{3}
-\indexentry{signup() (in module app)@\spxentry{signup()}\spxextra{in module app}|hyperpage}{3}
-\indexentry{handleUserInput() (in module app)@\spxentry{handleUserInput()}\spxextra{in module app}|hyperpage}{3}
-\indexentry{handleMessageFromServer() (in module app)@\spxentry{handleMessageFromServer()}\spxextra{in module app}|hyperpage}{3}
+\indexentry{module@\spxentry{module}!app@\spxentry{app}|hyperpage}{4}
+\indexentry{app@\spxentry{app}!module@\spxentry{module}|hyperpage}{4}
+\indexentry{connectToServer() (in module app)@\spxentry{connectToServer()}\spxextra{in module app}|hyperpage}{4}
+\indexentry{getUserSecretFromPassword() (in module app)@\spxentry{getUserSecretFromPassword()}\spxextra{in module app}|hyperpage}{4}
+\indexentry{login() (in module app)@\spxentry{login()}\spxextra{in module app}|hyperpage}{4}
+\indexentry{signup() (in module app)@\spxentry{signup()}\spxextra{in module app}|hyperpage}{4}
+\indexentry{handleMessageFromServer() (in module app)@\spxentry{handleMessageFromServer()}\spxextra{in module app}|hyperpage}{4}

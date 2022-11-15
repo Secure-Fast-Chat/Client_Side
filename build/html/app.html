@@ -34,6 +34,28 @@
   <div class="section" id="module-app">
 <span id="app-module"></span><h1>app module<a class="headerlink" href="#module-app" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
+<dt id="app.connectToServer">
+<code class="sig-prename descclassname">app.</code><code class="sig-name descname">connectToServer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sock</span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.connectToServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to connect to server and exchange the key for encryption</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sock</strong> (<em>socket.socket</em>) – Socket variable to use for connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="app.getUserSecretFromPassword">
+<code class="sig-prename descclassname">app.</code><code class="sig-name descname">getUserSecretFromPassword</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">passwd</span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.getUserSecretFromPassword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to convert password to ‘User Secret’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>passwd</strong> (<em>str</em>) – Password to convert</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="app.login">
 <code class="sig-prename descclassname">app.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sock</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to help user log in to the app</p>
@@ -59,12 +81,6 @@
 <dd class="field-even"><p>socket.socket</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="app.handleUserInput">
-<code class="sig-prename descclassname">app.</code><code class="sig-name descname">handleUserInput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.handleUserInput" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is called when the user sends some input. This function does the work asked by user</p>
 </dd></dl>
 
 <dl class="py function">

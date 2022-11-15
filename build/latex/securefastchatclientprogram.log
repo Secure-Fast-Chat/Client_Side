@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2022.9.4)  2 NOV 2022 16:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2022.9.4)  16 NOV 2022 00:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -690,11 +690,11 @@ LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <10> not available
 (Font)              Font shape `T1/pcr/m/sl' tried instead on input line 108.
  [1
 
-] [2] [3] [4
-
-]
+] [2] [3] [4]
 Chapter 2.
-[5] [6
+[5
+
+] [6
 
 ] [7
 
@@ -703,37 +703,37 @@ Chapter 2.
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 8--9
+Underfull \hbox (badness 10000) in paragraph at lines 10--11
 []\T1/pcr/m/n/10 _create_loginpass_request() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 Me
 s-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 9--10
+Underfull \hbox (badness 10000) in paragraph at lines 11--12
 []\T1/pcr/m/n/10 _create_loginuid_request() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 Mes
 -
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 10--11
+Underfull \hbox (badness 10000) in paragraph at lines 12--13
 []\T1/pcr/m/n/10 _create_signuppass_request() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 M
 es-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11--12
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
 []\T1/pcr/m/n/10 _create_signupuid_request() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 Me
 s-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 17--18
+Underfull \hbox (badness 10000) in paragraph at lines 21--22
 []\T1/pcr/m/n/10 _recv_data_from_server() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 Mes-s
 age.Message
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 18--19
+Underfull \hbox (badness 10000) in paragraph at lines 23--24
 []\T1/pcr/m/n/10 _send_data_to_server() \T1/ptm/m/n/10 (\T1/ptm/m/it/10 Mes-sag
 e.Message
  []
@@ -743,13 +743,13 @@ e.Message
 ]) (./securefastchatclientprogram.aux)
 Package rerunfilecheck Info: File `securefastchatclientprogram.out' has not cha
 nged.
-(rerunfilecheck)             Checksum: 9B56B5E363092BDF3B41B77D159539CD;690.
+(rerunfilecheck)             Checksum: 8CF157809222E4D79E248DF950A4A816;690.
  ) 
 Here is how much of TeX's memory you used:
- 13725 strings out of 481176
- 195858 string characters out of 5914227
- 526905 words of memory out of 5000000
- 30313 multiletter control sequences out of 15000+600000
+ 13739 strings out of 481176
+ 196184 string characters out of 5914227
+ 527188 words of memory out of 5000000
+ 30320 multiletter control sequences out of 15000+600000
  442961 words of font info for 77 fonts, out of 8000000 for 9000
  60 hyphenation exceptions out of 8191
  83i,11n,88p,390b,546s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -761,10 +761,10 @@ uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/urw/times/utmri8a.pfb>
-Output written on securefastchatclientprogram.pdf (13 pages, 100121 bytes).
+Output written on securefastchatclientprogram.pdf (13 pages, 102868 bytes).
 PDF statistics:
- 187 PDF objects out of 1000 (max. 8388607)
- 157 compressed objects within 2 object streams
- 39 named destinations out of 1000 (max. 500000)
+ 202 PDF objects out of 1000 (max. 8388607)
+ 172 compressed objects within 2 object streams
+ 46 named destinations out of 1000 (max. 500000)
  69 words of extra memory for PDF output out of 10000 (max. 10000000)
 

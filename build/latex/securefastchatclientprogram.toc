@@ -1,7 +1,7 @@
 \babel@toc {english}{}
 \contentsline {chapter}{\numberline {1}Client\_Side}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Message module}{1}{section.1.1}%
-\contentsline {section}{\numberline {1.2}app module}{3}{section.1.2}%
+\contentsline {section}{\numberline {1.2}app module}{4}{section.1.2}%
 \contentsline {chapter}{\numberline {2}Indices and tables}{5}{chapter.2}%
-\contentsline {chapter}{Python Module Index}{7}{section*.22}%
-\contentsline {chapter}{Index}{9}{section*.23}%
+\contentsline {chapter}{Python Module Index}{7}{section*.29}%
+\contentsline {chapter}{Index}{9}{section*.30}%

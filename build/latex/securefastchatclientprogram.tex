@@ -74,7 +74,7 @@
 
 
 \title{Secure Fast Chat: Client Program}
-\date{Nov 02, 2022}
+\date{Nov 16, 2022}
 \release{}
 \author{Khushang Singla \textbackslash{}and Mridul Agarwal \textbackslash{}and Arhaan Ahmad}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -149,7 +149,7 @@ Function to send the string to the server. It sends content of \_send\_data\_to\
 \index{\_recv\_data\_from\_server() (Message.Message method)@\spxentry{\_recv\_data\_from\_server()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._recv_data_from_server}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recv\_data\_from\_server}}}{\emph{\DUrole{n}{size}}}{}
+\phantomsection\label{\detokenize{Message:Message.Message._recv_data_from_server}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recv\_data\_from\_server}}}{\emph{\DUrole{n}{size}}, \emph{\DUrole{n}{authenticated}\DUrole{o}{=}\DUrole{default_value}{True}}}{}
 Function to recv data from server. Stores the bytes recieved in a variable named \_recvd\_msg.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
@@ -253,13 +253,31 @@ str
 
 \end{fulllineitems}
 
+\index{\_encrypt() (Message.Message method)@\spxentry{\_encrypt()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._encrypt}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encrypt}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{key}}}{}
+Encrypt the message to send to reciever
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Message to encrypt
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{key}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Key to encrypt the message
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{\_create\_loginpass\_request() (Message.Message method)@\spxentry{\_create\_loginpass\_request()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{Message:Message.Message._create_loginpass_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_loginpass\_request}}}{}{}
 The jsonheader has the following keys: |
-byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘loginpass’ |
-The content has salted password
+byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding.
 \begin{quote}\begin{description}
 \item[{Returns}] \leavevmode
 Message to send to server directly for login
@@ -376,6 +394,52 @@ int
 
 \end{fulllineitems}
 
+\index{\_keyex() (Message.Message method)@\spxentry{\_keyex()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._keyex}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_keyex}}}{}{}
+\end{fulllineitems}
+
+\index{\_recvmsg() (Message.Message method)@\spxentry{\_recvmsg()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._recvmsg}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recvmsg}}}{}{}
+Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have ‘content’,’content\sphinxhyphen{}type’,’sender’,’content\sphinxhyphen{}len’,’byteorder’ as the keys
+
+\end{fulllineitems}
+
+\index{\_sendmsg() (Message.Message method)@\spxentry{\_sendmsg()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._sendmsg}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_sendmsg}}}{}{}
+This function sends the message to the server
+
+\end{fulllineitems}
+
+\index{\_create\_group\_key() (Message.Message method)@\spxentry{\_create\_group\_key()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_group\_key}}}{}{}
+Function to get the Private key of group to use it to encrypt the messages being sent in groups
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+private key
+
+\item[{Return type}] \leavevmode
+str
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_create\_grp() (Message.Message method)@\spxentry{\_create\_grp()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_grp}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_grp}}}{}{}
+Function to send a request to create a group
+
+\end{fulllineitems}
+
 \index{processTask() (Message.Message method)@\spxentry{processTask()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
@@ -398,7 +462,33 @@ int
 
 
 \section{app module}
-\label{\detokenize{app:module-app}}\label{\detokenize{app:app-module}}\label{\detokenize{app::doc}}\index{module@\spxentry{module}!app@\spxentry{app}}\index{app@\spxentry{app}!module@\spxentry{module}}\index{login() (in module app)@\spxentry{login()}\spxextra{in module app}}
+\label{\detokenize{app:module-app}}\label{\detokenize{app:app-module}}\label{\detokenize{app::doc}}\index{module@\spxentry{module}!app@\spxentry{app}}\index{app@\spxentry{app}!module@\spxentry{module}}\index{connectToServer() (in module app)@\spxentry{connectToServer()}\spxextra{in module app}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{app:app.connectToServer}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{connectToServer}}}{\emph{\DUrole{n}{sock}}}{}
+Function to connect to server and exchange the key for encryption
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{sock}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket variable to use for connection
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{getUserSecretFromPassword() (in module app)@\spxentry{getUserSecretFromPassword()}\spxextra{in module app}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{app:app.getUserSecretFromPassword}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{getUserSecretFromPassword}}}{\emph{\DUrole{n}{passwd}}}{}
+Function to convert password to ‘User Secret’
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{passwd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Password to convert
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{login() (in module app)@\spxentry{login()}\spxextra{in module app}}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{app:app.login}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{login}}}{\emph{\DUrole{n}{sock}\DUrole{o}{=}\DUrole{default_value}{None}}}{}
@@ -427,14 +517,6 @@ Socket with which user is connected to server
 socket.socket
 
 \end{description}\end{quote}
-
-\end{fulllineitems}
-
-\index{handleUserInput() (in module app)@\spxentry{handleUserInput()}\spxextra{in module app}}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{app:app.handleUserInput}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{handleUserInput}}}{}{}
-This function is called when the user sends some input. This function does the work asked by user
 
 \end{fulllineitems}
 

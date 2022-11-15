@@ -34,7 +34,7 @@ def sendMessage(cmd,content_type,socket):
 
     request = {
             'message-content' : message ,
-            'content-type' : content_type
+            'content-type' : content_type,
             'recvr-username' : username 
             }
     msg = Message.Message(socket,'send-message',req)
@@ -58,7 +58,7 @@ def sendGroupMessage(cmd,content_type,socket):
 
     request = {
             'message-content' : message ,
-            'content-type' : content_type
+            'content-type' : content_type ,
             'recvr-username' : username 
             }
     msg = Message.Message(socket,'send-group-message',req)

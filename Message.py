@@ -304,8 +304,8 @@ class Message:
         header = self._json_decode(self._recvd_msg)
         self._recv_data_from_server(header['content-len'])
         msg = {
-                'content' : self._recvd_msg
-                'content-type' : header['content-type']
+                'content' : self._recvd_msg,
+                'content-type' : header['content-type'],
                 'sender' : header['sender']
                 }
         if msg['content-type'] == 'text':
