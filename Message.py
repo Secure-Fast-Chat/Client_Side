@@ -281,6 +281,23 @@ class Message:
         self._data_to_send = proto_header + encoded_json_header # Not sending any content since the data is in the header
         self._send_data_to_server()
  
+    def _recvmsg(self):
+        """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-len','byteorder' as the keys
+        """
+
+        self._recv_data_from_server(2)
+        len_header = struct.unpack('>H',self._recvd_msg)[0]
+        self._recv_data_from_server(len_header)
+        header = self._json_decode(self._recvd_msg)
+        self._recv_data_from_server(header['content-len'])
+        msg = {
+                'content' : self._recvd_msg
+                'content-type' : header['content-type']
+                'sender' : header['sender']
+                }
+        if msg['content-type'] == 'text':
+            msg['content'] = msg['content'].decode(ENCODING_USED)
+        return msg
 
     def processTask(self):
         """ Processes the task to do
@@ -296,3 +313,5 @@ class Message:
             return self._signuppass()
         if self.task == "keyex":
             return self._keyex()
+        if self.task == 'recv_msg':
+            return self._recvmsg()

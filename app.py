@@ -142,8 +142,20 @@ def handleMessageFromServer(socket):
     """ This function is called when there is a message from server....
     """
 
-    # Pending implementation
-    print('\033[1;2H'+msg+'\033[10;1H')
+    msg = Message.Message(socket,'recv_msg','').processTask()
+    to_print = ''
+    if(msg['content-type'] == 'file'):
+        filename = 'SecureFastChat_'+msg['sender'] + datetime.datetime.now
+        f = open(filename,'wb')
+        f.write(msg['content'])
+        f.close()
+        to_print = 'You recieved a file from ' + msg['sender'] + '. It is saved in current directory with filename: ' + filename
+    else:
+        to_print = '[' + msg['sender'] + ' : ' + datetime.datetime.now + ']: ' + msg['content']
+        f = open('~/SecureFastChatMessages'.'wa')
+        f.write(msg['content'])
+
+    print('\033[1;2H'+to_print+'\033[10;1H')
 
 if __name__ == "__main__":
     os.system('clear')
