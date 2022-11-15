@@ -110,6 +110,19 @@ class Message:
         ###################################################
         # Commented out instances of this for now, because we are sending the plain text password to the server for now, remember to uncomment them if we change minds
         return text
+
+    def _encrypt(self,msg,key):
+        """ Encrypt the message to send to reciever
+
+        :param msg: Message to encrypt
+        :type msg: str
+        :param key: Key to encrypt the message
+        :type key: str
+        """
+        ########################################################
+        ############### Pending Implementation #################
+        ########################################################
+        return msg
     
     def _create_loginpass_request(self):
         """ The jsonheader has the following keys: |
@@ -299,6 +312,44 @@ class Message:
             msg['content'] = msg['content'].decode(ENCODING_USED)
         return msg
 
+    def _sendmsg(self):
+        """ This function sends the message to the server
+        """
+
+        ####################################################################
+        # Left to check the availability of uid and other minor edge cases #
+        ####################################################################
+        header = {
+                'byteorder' : sys.byteorder() ,
+                'request' : 'get-key' ,
+                'recvr-username' : self.request['username'] ,
+                'content-len' : 0
+                }
+        header = self._json_encode(header)
+        protoheader = struct.pack('>H',len(header))
+        self._data_to_send = protoheader + header
+        self._send_data_to_server()
+
+        self._recv_data_from_server(2)
+        len_header = struct.unpack('>H',self._recvd_msg)
+        self._recv_data_from_server(len_header)
+        header = self._json_decode(self._recvd_msg)
+        recvr_key = header['key']
+
+        #send the message
+        msg = self._encrypt(self.request_content['message-content'],recvr_key)
+        header = {
+                'byteorder' : sys.byteorder(),
+                'request' : 'send-msg',
+                'content-type' : self.request_content['content-type'],
+                'rcvr-uid' : self.request_content['content_type'],
+                'content-len' : len(msg)
+                }
+        header = self._json_encode(header)
+        protoheader = struct.pack('>H',len(header))
+        self._data_to_send = protoheader + header + msg
+        self._send_data_to_server()
+
     def processTask(self):
         """ Processes the task to do
 
@@ -315,3 +366,5 @@ class Message:
             return self._keyex()
         if self.task == 'recv_msg':
             return self._recvmsg()
+        if self.task == 'send_msg':
+            return self._sendmsg()
