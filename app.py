@@ -54,8 +54,6 @@ def connectToServer(sock):
     global serverkey
     serverkey = header['key']
 
-
-
 def login(sock = None):
     """Function to help user log in to the app
 
@@ -149,11 +147,12 @@ def handleMessageFromServer(socket):
         f = open(filename,'wb')
         f.write(msg['content'])
         f.close()
-        to_print = 'You recieved a file from ' + msg['sender'] + '. It is saved in current directory with filename: ' + filename
+        to_print = 'You recieved a file from ' + msg['sender'] + '. It is saved in current directory with filename: ' + os.sytem('pwd') + filename
     else:
         to_print = '[' + msg['sender'] + ' : ' + datetime.datetime.now + ']: ' + msg['content']
-        f = open('~/SecureFastChatMessages'.'wa')
-        f.write(msg['content'])
+
+    f = open('~/SecureFastChatMessages','wa')
+    f.write(to_print)
 
     print('\033[1;2H'+to_print+'\033[10;1H')
 
