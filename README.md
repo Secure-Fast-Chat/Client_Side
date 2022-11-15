@@ -3,6 +3,10 @@
 ## Usage Instructions
 
 - `\send <username> <message>`
-- `\sendgrp <grpname> <messsage>`
 - `\sendfile <username> <file>`
+
+### Group Related Commands
+
+- `\mkgrp <grpname>`
+- `\sendgrp <grpname> <messsage>`
 - `\sendfilegrp <grpname> <file>`

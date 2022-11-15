@@ -350,6 +350,36 @@ class Message:
         self._data_to_send = protoheader + header + msg
         self._send_data_to_server()
 
+    def _create_group_key(self):
+        """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
+
+        :return: private key
+        :rtype: str
+        """
+        key = '0'*16
+        return key
+
+    def _create_grp(self):
+        """ Function to send a request to create a group
+
+        """
+
+        group_name = self.request_content
+        group_private_key = self._create_group_key()
+        global user_public_key
+        encryption_key = user_public_key
+        group_key = self._encrypt(group_private_key,encryption_key)
+        header = {
+                'guid' : group_name,
+                'content-len' : 0,
+                'group-key' : group_key
+                }
+        hdr = self._json_encode(header)
+        self._data_to_send = struct.pack('>H',len(hdr)) + hdr
+        self._send_data_to_server()
+        self._recv_data_from_server(2)
+        return struct.unpack('>H',self._recvd_msg)[0]
+
     def processTask(self):
         """ Processes the task to do
 
@@ -368,3 +398,5 @@ class Message:
             return self._recvmsg()
         if self.task == 'send_msg':
             return self._sendmsg()
+        if self.task == 'create-grp':
+            return self._create_grp()

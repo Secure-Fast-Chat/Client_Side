@@ -26,10 +26,19 @@ welcome_message = """    1. Login using and existing account
     3. Quit
       Enter Your Command(1/2/3): """
 
-serverkey = None
-privatekey = None
+userSecret = None # This is the secret of the user
+serverkey = None # This is the public key of server to encrypt content to send to server
+privatekey = None # This is the private key of client for recieving content from server
+user_public_key = None
+
 def connectToServer(sock):
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
+    """ Function to connect to server and exchange the key for encryption
+
+    :param sock: Socket variable to use for connection
+    :type sock: socket.socket
+    """
+
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     try:
         sock.connect((host,port))
     except ConnectionRefusedError:
@@ -54,6 +63,17 @@ def connectToServer(sock):
     global serverkey
     serverkey = header['key']
 
+##################################################################
+#################### Pending Implementation ######################
+##################################################################
+def getUserSecretFromPassword(passwd):
+    """ Function to convert password to 'User Secret'
+
+    :param passwd: Password to convert
+    :type passwd: str
+    """
+    return passwd
+
 def login(sock = None):
     """Function to help user log in to the app
 
@@ -76,6 +96,7 @@ def login(sock = None):
     message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd})
     response = message.processTask()
     if(response == 0):
+        userSecret = getUserSecretFromPassword(passwd)
         print("Successfully Logged In")
         return sock
     elif response == 1:
