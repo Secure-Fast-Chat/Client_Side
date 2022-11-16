@@ -76,7 +76,7 @@
 \title{Secure Fast Chat: Client Program}
 \date{Nov 16, 2022}
 \release{}
-\author{Khushang Singla \textbackslash{}and Mridul Agarwal \textbackslash{}and Arhaan Ahmad}
+\author{Khushang Singla	Mridul Agarwal	Arhaan Ahmad}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{}
 \makeindex
@@ -261,10 +261,29 @@ Encrypt the message to send to reciever
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Message to encrypt
+\sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Message to encrypt
 
 \item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{key}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Key to encrypt the message
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_decrypt() (Message.Message method)@\spxentry{\_decrypt()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._decrypt}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_decrypt}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{key}}}{}
+Function to decrypt the content accessible to users only
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Content to decrypt
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{key}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Key to use for decryption
 
 \end{itemize}
 
@@ -394,6 +413,22 @@ int
 
 \end{fulllineitems}
 
+\index{\_create\_group\_key() (Message.Message method)@\spxentry{\_create\_group\_key()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._create_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_group\_key}}}{}{}
+Function to get the Private key of group to use it to encrypt the messages being sent in groups
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+private key
+
+\item[{Return type}] \leavevmode
+bytes
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{\_keyex() (Message.Message method)@\spxentry{\_keyex()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
@@ -408,6 +443,25 @@ Recieves the information from server. It interprets this as a message from some 
 
 \end{fulllineitems}
 
+\index{\_get\_user\_public\_key() (Message.Message method)@\spxentry{\_get\_user\_public\_key()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._get_user_public_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_user\_public\_key}}}{\emph{\DUrole{n}{uid}}}{}
+Function to get public key of a user
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{uid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} uid of user
+
+\item[{Returns}] \leavevmode
+key of user if found, None otherwise
+
+\item[{Return type}] \leavevmode
+bytes
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 \index{\_sendmsg() (Message.Message method)@\spxentry{\_sendmsg()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
@@ -416,27 +470,59 @@ This function sends the message to the server
 
 \end{fulllineitems}
 
-\index{\_create\_group\_key() (Message.Message method)@\spxentry{\_create\_group\_key()}\spxextra{Message.Message method}}
-
-\begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_group\_key}}}{}{}
-Function to get the Private key of group to use it to encrypt the messages being sent in groups
-\begin{quote}\begin{description}
-\item[{Returns}] \leavevmode
-private key
-
-\item[{Return type}] \leavevmode
-str
-
-\end{description}\end{quote}
-
-\end{fulllineitems}
-
 \index{\_create\_grp() (Message.Message method)@\spxentry{\_create\_grp()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
 \phantomsection\label{\detokenize{Message:Message.Message._create_grp}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_grp}}}{}{}
 Function to send a request to create a group
+
+\end{fulllineitems}
+
+\index{\_get\_group\_key() (Message.Message method)@\spxentry{\_get\_group\_key()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._get_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_group\_key}}}{\emph{\DUrole{n}{guid}}}{}
+Function to get the encrypted group private key from server.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{guid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Group Name
+
+\item[{Returns}] \leavevmode
+This function returns key if found, else None if User not in group
+
+\item[{Return type}] \leavevmode
+str or None
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_add\_member\_in\_group() (Message.Message method)@\spxentry{\_add\_member\_in\_group()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._add_member_in_group}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_add\_member\_in\_group}}}{}{}
+Function to add Member in a group
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Exit status to tell the status
+
+\item[{Return type}] \leavevmode
+int
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_send\_message\_in\_group() (Message.Message method)@\spxentry{\_send\_message\_in\_group()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._send_message_in_group}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_send\_message\_in\_group}}}{}{}
+Function to send message in a group
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+0 for success, 1 for failure, 2 if not in group
+
+\end{description}\end{quote}
 
 \end{fulllineitems}
 
@@ -530,6 +616,112 @@ This function is called when there is a message from server….
 
 
 
+\section{userInputHandler module}
+\label{\detokenize{userInputHandler:module-userInputHandler}}\label{\detokenize{userInputHandler:userinputhandler-module}}\label{\detokenize{userInputHandler::doc}}\index{module@\spxentry{module}!userInputHandler@\spxentry{userInputHandler}}\index{userInputHandler@\spxentry{userInputHandler}!module@\spxentry{module}}\index{checkValidityOfUID() (in module userInputHandler)@\spxentry{checkValidityOfUID()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.checkValidityOfUID}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{checkValidityOfUID}}}{\emph{\DUrole{n}{uid}}}{}
+Function to check if the uid is valid. A valid uid is one which has only a\sphinxhyphen{}z,A\sphinxhyphen{}Z,0\sphinxhyphen{}9,\_ characters
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{uid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} User id to check for
+
+\item[{Returns}] \leavevmode
+Return True if valid
+
+\item[{Return type}] \leavevmode
+bool
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{sendMessage() (in module userInputHandler)@\spxentry{sendMessage()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendMessage}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}}{}
+Parse the messsage to send to the required user
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The cmd written after “send “
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Connection socket
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{sendGroupMessage() (in module userInputHandler)@\spxentry{sendGroupMessage()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendGroupMessage}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendGroupMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}}{}
+Parse the message to send to everyone in the group
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The cmd written after “sendgrp “
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Connection socket
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{createGroup() (in module userInputHandler)@\spxentry{createGroup()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.createGroup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{createGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}}{}
+Create a group with the name cmd
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Group name
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket which is connected to server
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{addMemberInGroup() (in module userInputHandler)@\spxentry{addMemberInGroup()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.addMemberInGroup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{addMemberInGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}}{}
+Function to add member in a group
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The part of command containing group name and new member userid
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket with active authorized connection to server
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{handleUserInput() (in module userInputHandler)@\spxentry{handleUserInput()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.handleUserInput}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{handleUserInput}}}{\emph{\DUrole{n}{socket}}}{}
+This function is called when the user sends some input. This function does the work asked by user
+
+\end{fulllineitems}
+
+
+
 \chapter{Indices and tables}
 \label{\detokenize{index:indices-and-tables}}\begin{itemize}
 \item {} 
@@ -552,6 +744,9 @@ This function is called when there is a message from server….
 \indexspace
 \bigletter{m}
 \item\relax\sphinxstyleindexentry{Message}\sphinxstyleindexpageref{Message:\detokenize{module-Message}}
+\indexspace
+\bigletter{u}
+\item\relax\sphinxstyleindexentry{userInputHandler}\sphinxstyleindexpageref{userInputHandler:\detokenize{module-userInputHandler}}
 \end{sphinxtheindex}
 
 \renewcommand{\indexname}{Index}

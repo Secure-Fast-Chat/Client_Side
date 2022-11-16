@@ -43,11 +43,14 @@
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  
 </div>
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="Message.html#Message.Message._add_member_in_group">_add_member_in_group() (Message.Message method)</a>
+</li>
       <li><a href="Message.html#Message.Message._create_group_key">_create_group_key() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._create_grp">_create_grp() (Message.Message method)</a>
@@ -60,14 +63,20 @@
 </li>
       <li><a href="Message.html#Message.Message._create_signupuid_request">_create_signupuid_request() (Message.Message method)</a>
 </li>
+      <li><a href="Message.html#Message.Message._decrypt">_decrypt() (Message.Message method)</a>
+</li>
       <li><a href="Message.html#Message.Message._encode">_encode() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._encrypt">_encrypt() (Message.Message method)</a>
 </li>
-      <li><a href="Message.html#Message.Message._hash_password">_hash_password() (Message.Message method)</a>
+      <li><a href="Message.html#Message.Message._get_group_key">_get_group_key() (Message.Message method)</a>
+</li>
+      <li><a href="Message.html#Message.Message._get_user_public_key">_get_user_public_key() (Message.Message method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="Message.html#Message.Message._hash_password">_hash_password() (Message.Message method)</a>
+</li>
       <li><a href="Message.html#Message.Message._json_decode">_json_decode() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._json_encode">_json_encode() (Message.Message method)</a>
@@ -82,6 +91,8 @@
 </li>
       <li><a href="Message.html#Message.Message._send_data_to_server">_send_data_to_server() (Message.Message method)</a>
 </li>
+      <li><a href="Message.html#Message.Message._send_message_in_group">_send_message_in_group() (Message.Message method)</a>
+</li>
       <li><a href="Message.html#Message.Message._sendmsg">_sendmsg() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._signuppass">_signuppass() (Message.Message method)</a>
@@ -93,6 +104,10 @@
 
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="userInputHandler.html#userInputHandler.addMemberInGroup">addMemberInGroup() (in module userInputHandler)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     app
@@ -107,7 +122,13 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="userInputHandler.html#userInputHandler.checkValidityOfUID">checkValidityOfUID() (in module userInputHandler)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app.html#app.connectToServer">connectToServer() (in module app)</a>
+</li>
+      <li><a href="userInputHandler.html#userInputHandler.createGroup">createGroup() (in module userInputHandler)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -124,6 +145,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app.html#app.handleMessageFromServer">handleMessageFromServer() (in module app)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="userInputHandler.html#userInputHandler.handleUserInput">handleUserInput() (in module userInputHandler)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -158,6 +183,8 @@
 </li>
         <li><a href="Message.html#module-Message">Message</a>
 </li>
+        <li><a href="userInputHandler.html#module-userInputHandler">userInputHandler</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -173,8 +200,27 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="userInputHandler.html#userInputHandler.sendGroupMessage">sendGroupMessage() (in module userInputHandler)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="userInputHandler.html#userInputHandler.sendMessage">sendMessage() (in module userInputHandler)</a>
+</li>
       <li><a href="app.html#app.signup">signup() (in module app)</a>
 </li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    userInputHandler
+
+      <ul>
+        <li><a href="userInputHandler.html#module-userInputHandler">module</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -231,7 +277,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, Khushang Singla \and Mridul Agarwal \and Arhaan Ahmad.
+      &copy;2022, Khushang Singla	Mridul Agarwal	Arhaan Ahmad.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>

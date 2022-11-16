@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Secure Fast Chat: Client Program'
-copyright = '2022, Khushang Singla \\and Mridul Agarwal \\and Arhaan Ahmad'
-author = 'Khushang Singla \\and Mridul Agarwal \\and Arhaan Ahmad'
+copyright = '2022, Khushang Singla\tMridul Agarwal\tArhaan Ahmad'
+author = 'Khushang Singla\tMridul Agarwal\tArhaan Ahmad'
 
 
 # -- General configuration ---------------------------------------------------
