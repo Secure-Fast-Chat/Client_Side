@@ -8,5 +8,6 @@
 ### Group Related Commands
 
 - `\mkgrp <grpname>`
+- `\addmem <grpname> <username>`
 - `\sendgrp <grpname> <messsage>`
 - `\sendfilegrp <grpname> <file>`

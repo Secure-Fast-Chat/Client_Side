@@ -29,7 +29,7 @@ welcome_message = """    1. Login using and existing account
 userSecret = None # This is the secret of the user
 serverkey = None # This is the public key of server to encrypt content to send to server
 privatekey = None # This is the private key of client for recieving content from server
-user_public_key = None
+user_public_key = None # Public Key of user to encrypt messages being sent by other users
 
 def connectToServer(sock):
     """ Function to connect to server and exchange the key for encryption

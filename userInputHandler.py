@@ -15,7 +15,6 @@ def checkValidityOfUID(uid):
         return False
     return True
 
-
 def sendMessage(cmd,content_type,socket):
     """ Parse the messsage to send to the required user
 
@@ -31,6 +30,9 @@ def sendMessage(cmd,content_type,socket):
         f = open(message,'rb')
         message = f.read()
         f.close()
+    else:
+        global ENCODING_USED
+        message = message.encode(ENCODING_USED)
 
     request = {
             'message-content' : message ,
@@ -39,6 +41,10 @@ def sendMessage(cmd,content_type,socket):
             }
     msg = Message.Message(socket,'send-message',req)
     response = msg.processTask()
+    if response == 0:
+        return
+    if response == 1:
+        print(f"No user with userid: {username}")
 
 def sendGroupMessage(cmd,content_type,socket):
     """ Parse the message to send to everyone in the group
@@ -76,12 +82,38 @@ def createGroup(cmd,socket):
     is_valid = checkValidityOfUID(cmd)
     if not is_valid:
         print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name")
+        return
     response = Message.Message(socket,'create-grp',cmd).processTask()
     
     if response == 0:
         print("Successfully Created Group")
     elif response == 1:
         print("Group with this id already exists. Couldn't create group.")
+
+def addMemberInGroup(cmd,socket):
+    """ Function to add member in a group
+
+    :param cmd: The part of command containing group name and new member userid
+    :type cmd: str
+    :param socket: Socket with active authorized connection to server
+    :type socket: socket.socket
+    """
+
+    grpName = cmd.split(' ')[0]
+    userID = cmd.split(' ')[1]
+    req = {
+            'guid' : grpName,
+            'new-uid' : userID
+            }
+    response = Message.Message(socket,'add-mem',req).processTask()
+    if response == 0:
+        print("Successfully Created Group")
+    elif response == 1:
+        print("There is no group with this name")
+    elif response == 2:
+        print("You are not authorized to add Members in this group")
+    elif response == 3:
+        print(f'There is no user with username: {userID}')
 
 def handleUserInput(socket):
     """ This function is called when the user sends some input. This function does the work asked by user
@@ -99,3 +131,5 @@ def handleUserInput(socket):
         sendGroupMessage(userInput[13:],'file',socket)
     elif '\\mkgrp ' == userInput[:7]:
         createGroup(userInput[7:],socket)
+    elif '\\addmem ' == userInput[:8]:
+        addMemberInGroup(userInput[8:],socket)

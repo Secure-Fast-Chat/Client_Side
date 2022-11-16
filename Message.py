@@ -115,7 +115,7 @@ class Message:
         """ Encrypt the message to send to reciever
 
         :param msg: Message to encrypt
-        :type msg: str
+        :type msg: bytes
         :param key: Key to encrypt the message
         :type key: str
         """
@@ -124,6 +124,16 @@ class Message:
         ########################################################
         return msg
     
+    def _decrypt(self,msg,key):
+        """ Function to decrypt the content accessible to users only
+
+        :param msg: Content to decrypt
+        :type msg: bytes
+        :param key: Key to use for decryption
+        :type key: str
+        """
+        return msg
+
     def _create_loginpass_request(self):
         """ The jsonheader has the following keys: |
         byteorder, request, content-length, content-encoding. 
@@ -277,6 +287,15 @@ class Message:
         key = header['key']
         return 1,key
 
+    def _create_group_key(self):
+        """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
+
+        :return: private key
+        :rtype: bytes
+        """
+        key = b'0'*16
+        return key
+
     def _keyex(self):
         global ENCODING_USED
         publickey = self.request_content['key']
@@ -303,6 +322,9 @@ class Message:
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
         self._recv_data_from_server(header['content-len'])
+        msg_content = self._recvd_msg
+        global userSecret
+        msg_content = self._decrypt(msg_content,userSecret)
         msg = {
                 'content' : self._recvd_msg,
                 'content-type' : header['content-type'],
@@ -312,17 +334,18 @@ class Message:
             msg['content'] = msg['content'].decode(ENCODING_USED)
         return msg
 
-    def _sendmsg(self):
-        """ This function sends the message to the server
-        """
+    def _get_user_public_key(self,uid):
+        """ Function to get public key of a user
 
-        ####################################################################
-        # Left to check the availability of uid and other minor edge cases #
-        ####################################################################
+        :param uid: uid of user
+        :type uid: str
+        :return: key of user if found, None otherwise
+        :rtype: bytes
+        """
         header = {
                 'byteorder' : sys.byteorder() ,
                 'request' : 'get-key' ,
-                'recvr-username' : self.request['username'] ,
+                'recvr-username' : uid,
                 'content-len' : 0
                 }
         header = self._json_encode(header)
@@ -334,8 +357,22 @@ class Message:
         len_header = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
+        if 'key' not in header.keys():
+            return None
         recvr_key = header['key']
+        return recvr_key
 
+    def _sendmsg(self):
+        """ This function sends the message to the server
+        """
+
+        ####################################################################
+        # Left to check the availability of uid and other minor edge cases #
+        ####################################################################
+
+        recvr_key = self._get_user_public_key(self.request_content['username'])
+        if not recvr_key:
+            return 1
         #send the message
         msg = self._encrypt(self.request_content['message-content'],recvr_key)
         header = {
@@ -349,15 +386,7 @@ class Message:
         protoheader = struct.pack('>H',len(header))
         self._data_to_send = protoheader + header + msg
         self._send_data_to_server()
-
-    def _create_group_key(self):
-        """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
-
-        :return: private key
-        :rtype: str
-        """
-        key = '0'*16
-        return key
+        return 0
 
     def _create_grp(self):
         """ Function to send a request to create a group
@@ -380,6 +409,59 @@ class Message:
         self._recv_data_from_server(2)
         return struct.unpack('>H',self._recvd_msg)[0]
 
+    def _get_group_key(self,guid):
+        """Function to get the encrypted group private key from server.
+
+        :param guid: Group Name
+        :type guid: str
+        :return: This function returns key if found, else None if User not in group
+        :rtype: str or None
+        """
+
+        header = {
+                'request' : 'grp-key',
+                'content-len' : 0,
+                'byteorder' : sys.byteorder()
+                }
+        hdr = self._json_encode(header)
+        self._data_to_send = struct.pack(">H",len(hdr)) + hdr
+        self._send_data_to_server()
+        self._recv_data_from_server(2)
+        len_header = struct.unpack('>H',self._recvd_msg)
+        self._recv_data_from_server(len_header)
+        header = self._json_decode(self._recvd_msg)
+        if 'group-key' in header.keys():
+            return header['group-key']
+        return None
+
+    def _add_member_in_group(self):
+        """ Function to add Member in a group
+
+        :return: Exit status to tell the status
+        :rtype: int
+        """
+
+        userGroupKey = self._get_group_key(self.request_content['guid'])
+        if not userGroupKey:
+            return 1
+        global userSecret
+        groupPrivateKey = self._decrypt(userGroupKey,userSecret)
+        userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
+        if not userPublicKey:
+            return 3
+        newUserGroupKey = self._encrypt(groupPrivateKey,userPublicKey)
+        header = {
+                'request' : 'add-mem',
+                'guid' : self.request_content['guid'],
+                'new-uid' : self.request_content['new-uid'],
+                'user-grp-key' : newUserGroupKey
+                }
+        hdr = self._json_encode(header)
+        self._data_to_send = struct.pack('>H',len(hdr)) + hdr
+        self._send_data_to_server()
+        self._recv_data_from_server(2) # 0 for success and 2 if not admin
+        return struct.unpack('>H',self._recvd_msg)[0]
+
     def processTask(self):
         """ Processes the task to do
 
@@ -400,3 +482,5 @@ class Message:
             return self._sendmsg()
         if self.task == 'create-grp':
             return self._create_grp()
+        if self.task == 'add-mem':
+            return self._add_member_in_group()
