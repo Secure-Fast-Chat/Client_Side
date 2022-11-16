@@ -55,20 +55,29 @@ def sendGroupMessage(cmd,content_type,socket):
     :type socket: socket.socket
     """
 
-    username = cmd.split(" ",1)[0]
+    groupName = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
         f = open(message,'rb')
         message = f.read()
         f.close()
+    else:
+        global ENCODING_USED
+        message = message.encode(ENCODING_USED)
 
     request = {
             'message-content' : message ,
             'content-type' : content_type ,
-            'recvr-username' : username 
+            'guid' : groupName 
             }
     msg = Message.Message(socket,'send-group-message',req)
     response = msg.processTask()
+    if response == 0:
+        return
+    if response == 1:
+        print("Couldn't send")
+    if response == 2:
+        print(f"No group with group name {groupName}")
 
 def createGroup(cmd,socket):
     """ Create a group with the name cmd

@@ -462,6 +462,29 @@ class Message:
         self._recv_data_from_server(2) # 0 for success and 2 if not admin
         return struct.unpack('>H',self._recvd_msg)[0]
 
+    def _send_message_in_group(self):
+        """Function to send message in a group
+
+        :return: 0 for success, 1 for failure, 2 if not in group
+        """
+
+        userGroupKey = self._get_group_key(self.request_content['guid'])
+        if not userGroupKey:
+            return 2
+        global userSecret
+        groupPrivateKey = self._decrypt(userGroupKey,userSecret)
+        content = self._encrypt(self.request_content['message-content'],groupPrivateKey)
+        header = {
+                'content-len' : len(content),
+                'content-type' : self.request_content['content-type'], 
+                'guid' : self.request_content['guid']
+                }
+        hdr = self._json_encode(header)
+        self._data_to_send = struct.pack('>H',len(hdr)) + hdr + content
+        self._send_data_to_server()
+        self._recv_data_from_server(2)
+        return struct.unpack('>H',self._recvd_msg)[0]
+
     def processTask(self):
         """ Processes the task to do
 
@@ -484,3 +507,5 @@ class Message:
             return self._create_grp()
         if self.task == 'add-mem':
             return self._add_member_in_group()
+        if self.task == 'send-group-message':
+            return self._send_message_in_group()
