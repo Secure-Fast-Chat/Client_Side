@@ -4,10 +4,12 @@ import selectors
 import getpass
 import socket
 import userInputHandler
+import nacl
 import nacl.utils
 from nacl.public import PrivateKey, Box
 import struct
 import json
+from nacl.encoding import Base64Encoder
 
 start_up_banner = """
 ***********************************************************************
@@ -31,7 +33,7 @@ serverkey = None # This is the public key of server to encrypt content to send t
 privatekey = None # This is the private key of client for recieving content from server
 user_public_key = None # Public Key of user to encrypt messages being sent by other users
 
-def connectToServer(sock):
+def connectToServer():
     print("Connecting to server")
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
@@ -44,7 +46,7 @@ def connectToServer(sock):
     global privatekey
     privatekey = PrivateKey.generate()
     myPublicKey = privatekey.public_key
-    message = Message.Message(sock,'keyex',{'key' : myPublicKey}) 
+    message = Message.Message(sock,'keyex',{'key' : myPublicKey.encode(Base64Encoder).decode()}) 
     message.processTask()
 
     data = sock.recv(2)
@@ -56,9 +58,10 @@ def connectToServer(sock):
         print("Error occurred while connecting")
         exit()
     global serverkey
-    serverkey = header['key']
+    serverkey = nacl.public.PublicKey(header['key'], encoder=Base64Encoder) 
     box = Box(privatekey, serverkey)
-    sel.register(conn, events, data={"box":box})
+    
+    return sock, box
 
 ##################################################################
 #################### Pending Implementation ######################
@@ -177,6 +180,9 @@ def handleMessageFromServer(socket):
 if __name__ == "__main__":
     os.system('clear')
     conn_socket = None
+    conn_socket, box = connectToServer()
+    sel = selectors.DefaultSelector()
+
     # Try to login/signup
     try:
         print(start_up_banner)
@@ -187,10 +193,10 @@ if __name__ == "__main__":
                 exit()
                 break
             elif cmd == '1':
-                conn_socket = login()
+                login(conn_socket)
                 break
             elif cmd == '2':
-                conn_socket = signup()
+                signup(conn_socket)
                 break
             else:
                 print("\n  Please Enter a valid Command\n")
@@ -203,16 +209,15 @@ if __name__ == "__main__":
         raise
 
     # Setting up selectors for handling user-inputs and recieving messages
-    sel = selectors.DefaultSelector()
-    sel.register(0,selectors.EVENT_READ,data = 'user-input')
-    sel.register(conn_socket,selectors.EVENT_READ,data = 'socket')
+    sel.register(0,selectors.EVENT_READ,data = {'type':'user-input', 'box':box})
+    sel.register(conn_socket,selectors.EVENT_READ,data = {'type':'socket', 'box':box})
 
     # Loop for running the app
     while True:
         # Blocks until any input is recieved
         events = sel.select(timeout = None)
         for key,mask in events:
-            if(key.data == 'user-input'):
+            if(key.data['type'] == 'user-input'):
                 userInputHandler.handleUserInput()
             else:
                 handleMessageFromServer(key.fileobj)
