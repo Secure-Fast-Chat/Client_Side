@@ -32,13 +32,8 @@ privatekey = None # This is the private key of client for recieving content from
 user_public_key = None # Public Key of user to encrypt messages being sent by other users
 
 def connectToServer(sock):
-    """ Function to connect to server and exchange the key for encryption
-
-    :param sock: Socket variable to use for connection
-    :type sock: socket.socket
-    """
-
-    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    print("Connecting to server")
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
         sock.connect((host,port))
     except ConnectionRefusedError:
@@ -62,6 +57,8 @@ def connectToServer(sock):
         exit()
     global serverkey
     serverkey = header['key']
+    box = Box(privatekey, serverkey)
+    sel.register(conn, events, data={"box":box})
 
 ##################################################################
 #################### Pending Implementation ######################
