@@ -148,30 +148,7 @@ class Message:
         """
         return msg
 
-    def _create_loginpass_request(self):
-        """ The jsonheader has the following keys: |
-        byteorder, request, content-length, content-encoding. 
-
-        :return: Message to send to server directly for login
-        :rtype: bytes
-        """
-
-        global ENCODING_USED
-        userid = self.request_content['userid']
-        content = bytes(self.request_content['password'],encoding=ENCODING_USED)
-        jsonheader = {
-            "byteorder": sys.byteorder,
-            "request" : 'loginpass',
-            'content-length' : len(content),
-            "content-encoding" : ENCODING_USED,
-        }
-        encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
-        proto_header = struct.pack('>H',len(encoded_json_header))
-        # Command to use for unpacking of proto_header: 
-        # struct.unpack('>H',proto_header)[0]
-        return proto_header + self._encrypt_server(encoded_json_header) + self._encrypt_server(content)
-
-    def _create_loginuid_request(self):
+    def _create_login_request(self):
         """ The jsonheader has the following keys: |
         byteorder, request, content-length, content-encoding. The value for request is 'loginuid' |
         The content has user id.
@@ -181,13 +158,11 @@ class Message:
         """
 
         global ENCODING_USED
-        userid = self.request_content['userid']
-        content = bytes(userid ,encoding=ENCODING_USED)
-        content = self._encrypt_server(content)
         jsonheader = {
             "byteorder": sys.byteorder,
-            "request" : 'loginuid',
-            'content-length' : len(content),
+            "request" : 'login',
+            "username" :self.request_content['userid'],
+            "password":self.request_content['password'], 
             "content-encoding" : ENCODING_USED,
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
@@ -195,7 +170,7 @@ class Message:
         proto_header = struct.pack('>H',len(encoded_json_header))
         # Command to use for unpacking of proto_header: 
         # struct.unpack('>H',proto_header)[0]
-        return proto_header + encoded_json_header +content
+        return proto_header + encoded_json_header
 
     def _create_signuppass_request(self):
         """ The jsonheader has the following keys: |
@@ -257,20 +232,12 @@ class Message:
         :rtype: int
         """
 
-        self._data_to_send = self._create_loginuid_request()
+        self._data_to_send = self._create_login_request()
         self._send_data_to_server()
         # Recieve login result from server
         self._recv_data_from_server(2, False)
-        header_length = struct.unpack('>H',self._recvd_msg)[0]
-        self._recv_data_from_server(header_length)
-        header = self._json_decode(self._recvd_msg,ENCODING_USED)
-        if not header['uid_found']:
-            return 2
-        logintoken = header['logintoken']
-        self._data_to_send = self._create_loginpass_request(logintoken)
-        self._send_data_to_server()
-        self._recv_data_from_server(2, False)
-        return struct.unpack('>H',self._recvd_msg)[0]
+        response = struct.unpack('>H',self._recvd_msg)[0]
+        return response
 
     def _signuppass(self):
         """ Function to save account password at server
