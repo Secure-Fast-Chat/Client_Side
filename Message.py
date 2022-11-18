@@ -21,7 +21,7 @@ class Message:
     :type _recvd_msg: bytes
     """
 
-    def __init__(self,conn_socket,task,request):
+    def __init__(self,conn_socket,task,request, box):
         """Constructor Object
 
         :param conn_socket: Socket which has a connection with server
@@ -35,6 +35,17 @@ class Message:
         self.socket = conn_socket
         self.request_content = request
         self._data_to_send = b''
+        self.box = box
+
+    def _encrypt_server(self, data):
+        """Encrypts the data
+
+        :param data: the data to encrypt
+        :type data: Any
+        :return: The data after encryption
+        :rtype: _type_
+        """
+        return self.box.encrypt(data)
 
     def _send_data_to_server(self):
         """ Function to send the string to the server. It sends content of _send_data_to_server to the server
@@ -46,14 +57,17 @@ class Message:
             left_message = left_message[bytes_sent:]
         return
 
-    def _recv_data_from_server(self,size, authenticated=True):
+    def _recv_data_from_server(self,size,encrypted=True, authenticated=True):
         """ Function to recv data from server. Stores the bytes recieved in a variable named _recvd_msg.
 
         :param size: Length of content to recieve from server
         :type size: int
         """
-
+        if size<20:
+            encrypted=False # Since the nonce itself must be atleast 24 bits long, this should never happen
         self._recvd_msg = self.socket.recv(size)
+        if encrypted:
+            self._recvd_msg = self.box.decrypt(self._recvd_msg)
         return
 
     def _json_encode(self, obj, encoding):
@@ -144,7 +158,6 @@ class Message:
 
         global ENCODING_USED
         userid = self.request_content['userid']
-        # hashed_password = self._hash_password(self.request_content['password'])
         content = bytes(self.request_content['password'],encoding=ENCODING_USED)
         jsonheader = {
             "byteorder": sys.byteorder,
@@ -156,7 +169,7 @@ class Message:
         proto_header = struct.pack('>H',len(encoded_json_header))
         # Command to use for unpacking of proto_header: 
         # struct.unpack('>H',proto_header)[0]
-        return proto_header + encoded_json_header + content
+        return proto_header + self._encrypt_server(encoded_json_header) + self._encrypt_server(content)
 
     def _create_loginuid_request(self):
         """ The jsonheader has the following keys: |
@@ -170,6 +183,7 @@ class Message:
         global ENCODING_USED
         userid = self.request_content['userid']
         content = bytes(userid ,encoding=ENCODING_USED)
+        content = self._encrypt_server(content)
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'loginuid',
@@ -177,10 +191,11 @@ class Message:
             "content-encoding" : ENCODING_USED,
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        encoded_json_header = self._encrypt_server(encoded_json_header)
         proto_header = struct.pack('>H',len(encoded_json_header))
         # Command to use for unpacking of proto_header: 
         # struct.unpack('>H',proto_header)[0]
-        return proto_header + encoded_json_header + content
+        return proto_header + encoded_json_header +content
 
     def _create_signuppass_request(self):
         """ The jsonheader has the following keys: |
@@ -193,7 +208,8 @@ class Message:
 
         global ENCODING_USED
         # password = self._hash_password(self.request_content['password'])
-        content = bytes(self._encode(self.request_content["password"]), encoding=ENCODING_USED) 
+        # content = bytes(self._encode(self.request_content["password"]), encoding=ENCODING_USED) 
+        content = self._encrypt_server(bytes(self.request_content["password"], encoding=ENCODING_USED))
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'signuppass',
@@ -201,6 +217,7 @@ class Message:
             "content-encoding" : ENCODING_USED,
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        encoded_json_header = self._encrypt_server(encoded_json_header)
         proto_header = struct.pack('>H',len(encoded_json_header))
         # Command to use for unpacking of proto_header: 
         # struct.unpack('>H',proto_header)[0]
@@ -218,6 +235,7 @@ class Message:
         global ENCODING_USED
         userid = self.request_content['userid']
         content = bytes(userid , encoding=ENCODING_USED)
+        content = self._encrypt_server(content)
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'signupuid',
@@ -225,6 +243,7 @@ class Message:
             "content-encoding" : ENCODING_USED,
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
+        encoded_json_header = self._encrypt_server(encoded_json_header)
         proto_header = struct.pack('>H',len(encoded_json_header))
         # Command to use for unpacking of proto_header: 
         # struct.unpack('>H',proto_header)[0]
@@ -241,7 +260,7 @@ class Message:
         self._data_to_send = self._create_loginuid_request()
         self._send_data_to_server()
         # Recieve login result from server
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         header_length = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(header_length)
         header = self._json_decode(self._recvd_msg,ENCODING_USED)
@@ -250,7 +269,7 @@ class Message:
         logintoken = header['logintoken']
         self._data_to_send = self._create_loginpass_request(logintoken)
         self._send_data_to_server()
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _signuppass(self):
@@ -264,7 +283,7 @@ class Message:
         self._data_to_send = self._create_signuppass_request()
         self._send_data_to_server()
         # Recieve login result from server
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _signupuid(self):
@@ -278,14 +297,14 @@ class Message:
         self._data_to_send = self._create_signupuid_request()
         self._send_data_to_server()
         # Recieve login result from server
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg, ENCODING_USED)
         if header['availability'] == 0:
             return 0
-        key = header['key']
-        return 1,key
+        else:
+            return 1
 
     def _create_group_key(self):
         """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
@@ -317,7 +336,7 @@ class Message:
         """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-len','byteorder' as the keys
         """
 
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
@@ -353,7 +372,7 @@ class Message:
         self._data_to_send = protoheader + header
         self._send_data_to_server()
 
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         len_header = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
@@ -406,7 +425,7 @@ class Message:
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr
         self._send_data_to_server()
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _get_group_key(self,guid):
@@ -426,7 +445,7 @@ class Message:
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack(">H",len(hdr)) + hdr
         self._send_data_to_server()
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         len_header = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
@@ -459,7 +478,7 @@ class Message:
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr
         self._send_data_to_server()
-        self._recv_data_from_server(2) # 0 for success and 2 if not admin
+        self._recv_data_from_server(2, False) # 0 for success and 2 if not admin
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _send_message_in_group(self):
@@ -482,7 +501,7 @@ class Message:
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr + content
         self._send_data_to_server()
-        self._recv_data_from_server(2)
+        self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def processTask(self):

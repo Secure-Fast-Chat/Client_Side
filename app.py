@@ -46,9 +46,8 @@ def connectToServer():
     global privatekey
     privatekey = PrivateKey.generate()
     myPublicKey = privatekey.public_key
-    message = Message.Message(sock,'keyex',{'key' : myPublicKey.encode(Base64Encoder).decode()}) 
+    message = Message.Message(sock,'keyex',{'key' : myPublicKey.encode(Base64Encoder).decode()}, box=None) 
     message.processTask()
-
     data = sock.recv(2)
     
     len_header = struct.unpack('>H',data)[0]
@@ -59,6 +58,8 @@ def connectToServer():
         exit()
     global serverkey
     serverkey = nacl.public.PublicKey(header['key'], encoder=Base64Encoder) 
+    print(f"Keys Exchanged. server public key = {serverkey}")
+    print(f"My public key is {myPublicKey}")
     box = Box(privatekey, serverkey)
     
     return sock, box
@@ -74,7 +75,7 @@ def getUserSecretFromPassword(passwd):
     """
     return passwd
 
-def login(sock = None):
+def login(sock, box):
     """Function to help user log in to the app
 
     :return: Socket with which user is connected to server
@@ -83,17 +84,10 @@ def login(sock = None):
 
     uid = input("Enter Username: ")
     passwd = getpass.getpass(prompt = "Enter Password: ")
-    print("  Connecting to Server...")
-    if not sock:
-        sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        try:
-            sock.connect((host,port))
-        except ConnectionRefusedError:
-            print(f"\nUnable to Connect to server on {host}:{port}")
-            exit()
+    
 
     # Use message class for sending request
-    message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd})
+    message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd}, box)
     response = message.processTask()
     if(response == 0):
         userSecret = getUserSecretFromPassword(passwd)
@@ -111,31 +105,22 @@ def login(sock = None):
         raise Exception("Why this Error in app.py -> login() ?") # Remove this if everything works correctly
     ##############################################################################################
 
-def signup(sock = None):
+def signup(sock, box):
     """Function to help user make new account
 
     :return: Socket with which user is connected to server
     :rtype: socket.socket"""
 
-    if not sock:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            sock.connect((host,port))
-        except ConnectionRefusedError:
-            print(f"\nUnable to Connect to server on {host}:{port}")
-            exit()
     username = input("Please enter username: ")
     print("Checking for availability of Username ... ")
-    message = Message.Message(sock,'signupuid',{'userid' : username})
+    message = Message.Message(sock,'signupuid',{'userid' : username}, box)
     response = message.processTask()
     # Do signup work
-    print("  Connecting to Server...")
 
     if response == 0:
         print("This username is already taken. Sorry! Please try again with a different username")
         return signup(sock)
     
-    return_code, server_publickey = response
     print("The username you requested for is available")
     password1 = getpass.getpass(prompt = "Enter Password: ")
     password2 = getpass.getpass(prompt = "Re-Enter Password: ")
@@ -144,14 +129,14 @@ def signup(sock = None):
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
 
-    message = Message.Message(sock,'signuppass',{'password' :password1})
+    message = Message.Message(sock,'signuppass',{'password' :password1}, box)
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")
-        return login(sock)
+        return login(sock, box)
     elif response == 2:
         print("Unable to signup. Please try Again.")
-        return signup()
+        return signup(sock, box)
     ##############################################################################################
     else:
         raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
@@ -193,10 +178,10 @@ if __name__ == "__main__":
                 exit()
                 break
             elif cmd == '1':
-                login(conn_socket)
+                login(conn_socket, box)
                 break
             elif cmd == '2':
-                signup(conn_socket)
+                signup(conn_socket, box)
                 break
             else:
                 print("\n  Please Enter a valid Command\n")
