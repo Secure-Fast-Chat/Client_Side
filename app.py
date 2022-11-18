@@ -95,10 +95,10 @@ def login(sock, box):
         return sock
     elif response == 1:
         print("Invalid User Id. Try Again")
-        return login()
+        return -1
     elif response == 2:
         print("Invalid Password. Please Try Again.")
-        return login()
+        return -1
     ##############################################################################################
     else:
         print(response)
@@ -119,7 +119,7 @@ def signup(sock, box):
 
     if response == 0:
         print("This username is already taken. Sorry! Please try again with a different username")
-        return signup(sock)
+        return -1
     
     print("The username you requested for is available")
     password1 = getpass.getpass(prompt = "Enter Password: ")
@@ -178,11 +178,11 @@ if __name__ == "__main__":
                 exit()
                 break
             elif cmd == '1':
-                login(conn_socket, box)
-                break
+                if login(conn_socket, box) != -1:
+                    break
             elif cmd == '2':
-                signup(conn_socket, box)
-                break
+                if signup(conn_socket, box) != -1:
+                    break
             else:
                 print("\n  Please Enter a valid Command\n")
     except KeyboardInterrupt:
