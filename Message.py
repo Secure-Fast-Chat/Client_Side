@@ -2,9 +2,9 @@ import json
 import struct
 import sys
 import hashlib
-from app import e2ePrivateKey
-from nacl.public import Box
-
+import app
+from nacl.public import Box, PublicKey
+from nacl.encoding import Base64Encoder
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
                         # The program uses universal encoding
@@ -131,7 +131,7 @@ class Message:
         # Commented out instances of this for now, because we are sending the plain text password to the server for now, remember to uncomment them if we change minds
         return text
 
-    def _encryptE2E(self,msg, receiverPubkey):
+    def _encryptE2E(self,msg, receiverPubkey: PublicKey)->str:
         """ Encrypt the message to send to reciever
 
         :param msg: Message to encrypt
@@ -142,11 +142,11 @@ class Message:
         ########################################################
         ############### Pending Implementation #################
         ########################################################
-        box = Box(e2ePrivateKey, receiverPubkey)
+        box = Box(app.e2ePrivateKey, receiverPubkey)
         msg = box.encrypt(msg)
         return msg
     
-    def _decrypt(self,msg,key):
+    def _decrypt(self,msg, senderPubKey: PublicKey)->str:
         """ Function to decrypt the content accessible to users only
 
         :param msg: Content to decrypt
@@ -154,6 +154,8 @@ class Message:
         :param key: Key to use for decryption
         :type key: str
         """
+        box = Box(app.e2ePrivateKey, senderPubKey)
+        msg = box.encrypt(msg)
         return msg
 
     def _create_login_request(self):
@@ -322,11 +324,10 @@ class Message:
         header = self._json_decode(self._recvd_msg)
         self._recv_data_from_server(header['content-len'])
         msg_content = self._recvd_msg
-        global userSecret
-        msg_content = self._decrypt(msg_content,userSecret)
-        msg = json.loads(msg_content)
+        senderKey = PublicKey(header["sender_e2e_public_key"], encoder=Base64Encoder)
+        msg_content = self._decrypt(msg_content, senderKey)
         msg = {
-                'content' : self._recvd_msg,
+                'content' : msg_content,
                 'content-type' : header['content-type'],
                 'sender' : header['sender']
                 }
@@ -361,7 +362,7 @@ class Message:
         if 'key' not in header.keys():
             return None
         recvr_key = header['key']
-        return recvr_key
+        return PublicKey(recvr_key, encoder=Base64Encoder)
 
     def _sendmsg(self):
         """ This function sends the message to the server

@@ -22,6 +22,8 @@ start_up_banner = """
 host = "127.0.0.1"
 port = 8000
 
+global e2ePrivateKey
+
 ENCODING_USED = "utf-8" 
 
 welcome_message = """    1. Login using and existing account
