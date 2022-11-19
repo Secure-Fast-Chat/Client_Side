@@ -7,6 +7,7 @@ import userInputHandler
 import nacl
 import nacl.utils
 from nacl.public import PrivateKey, Box
+import hashlib
 import struct
 import json
 from nacl.encoding import Base64Encoder
@@ -92,6 +93,8 @@ def login(sock, box):
     if(response == 0):
         userSecret = getUserSecretFromPassword(passwd)
         print("Successfully Logged In")
+        global e2ePrivateKey
+        e2ePrivateKey = PrivateKey(hashlib.sha256((uid+passwd).encode("utf-8")).digest())
         return sock
     elif response == 1:
         print("Invalid User Id. Try Again")
@@ -129,13 +132,16 @@ def signup(sock, box):
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
 
-    message = Message.Message(sock,'signuppass',{'password' :password1}, box)
+    global e2ePrivateKey
+    e2ePrivateKey = PrivateKey(hashlib.sha256((username+password1).encode("utf-8")).digest()) 
+    message = Message.Message(sock,'signuppass',{'password' :password1, "e2eKey":e2ePrivateKey.public_key.encode(Base64Encoder).decode()}, box)
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")
         return login(sock, box)
     elif response == 2:
         print("Unable to signup. Please try Again.")
+        e2ePrivateKey = None
         return signup(sock, box)
     ##############################################################################################
     else:

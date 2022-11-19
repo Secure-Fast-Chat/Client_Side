@@ -1,6 +1,7 @@
 import json
 import struct
 import sys
+import hashlib
 
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
@@ -106,7 +107,10 @@ class Message:
         ###################################################
         ########## Pending Implementation #################
         ###################################################
-        return passwd
+        global ENCODING_USED
+        passwd = passwd.encode(ENCODING_USED)
+        return hashlib.sha256(passwd).hexdigest()
+        
 
     def _encode(self,text,key):
         """ Function to encode the text using key from server
@@ -162,7 +166,7 @@ class Message:
             "byteorder": sys.byteorder,
             "request" : 'login',
             "username" :self.request_content['userid'],
-            "password":self.request_content['password'], 
+            "password": self._hash_password(self.request_content['password']), 
             "content-encoding" : ENCODING_USED,
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
@@ -184,7 +188,12 @@ class Message:
         global ENCODING_USED
         # password = self._hash_password(self.request_content['password'])
         # content = bytes(self._encode(self.request_content["password"]), encoding=ENCODING_USED) 
-        content = self._encrypt_server(bytes(self.request_content["password"], encoding=ENCODING_USED))
+        content={
+            "password": self._hash_password(self.request_content["password"]),
+            "e2eKey": self.request_content["e2eKey"]
+        }
+        content = self._json_encode(content,ENCODING_USED)
+        content =self._encrypt_server(content) 
         jsonheader = {
             "byteorder": sys.byteorder,
             "request" : 'signuppass',
@@ -335,6 +344,7 @@ class Message:
                 'content-len' : 0
                 }
         header = self._json_encode(header)
+        header = self._encrypt_server(header)
         protoheader = struct.pack('>H',len(header))
         self._data_to_send = protoheader + header
         self._send_data_to_server()
