@@ -2,6 +2,8 @@ import json
 import struct
 import sys
 import hashlib
+from app import e2ePrivateKey
+from nacl.public import Box
 
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
@@ -129,17 +131,19 @@ class Message:
         # Commented out instances of this for now, because we are sending the plain text password to the server for now, remember to uncomment them if we change minds
         return text
 
-    def _encrypt(self,msg,key):
+    def _encryptE2E(self,msg, receiverPubkey):
         """ Encrypt the message to send to reciever
 
         :param msg: Message to encrypt
         :type msg: bytes
-        :param key: Key to encrypt the message
-        :type key: str
+        :param receiverPubkey: Public Key of the other user
+        :type receiverPubkey: str
         """
         ########################################################
         ############### Pending Implementation #################
         ########################################################
+        box = Box(e2ePrivateKey, receiverPubkey)
+        msg = box.encrypt(msg)
         return msg
     
     def _decrypt(self,msg,key):
@@ -320,6 +324,7 @@ class Message:
         msg_content = self._recvd_msg
         global userSecret
         msg_content = self._decrypt(msg_content,userSecret)
+        msg = json.loads(msg_content)
         msg = {
                 'content' : self._recvd_msg,
                 'content-type' : header['content-type'],
@@ -370,7 +375,8 @@ class Message:
         if not recvr_key:
             return 1
         #send the message
-        msg = self._encrypt(self.request_content['message-content'],recvr_key)
+        msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
+        msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
         header = {
                 'byteorder' : sys.byteorder(),
                 'request' : 'send-msg',
@@ -393,7 +399,7 @@ class Message:
         group_private_key = self._create_group_key()
         global user_public_key
         encryption_key = user_public_key
-        group_key = self._encrypt(group_private_key,encryption_key)
+        group_key = self._encryptE2E(group_private_key,encryption_key)
         header = {
                 'guid' : group_name,
                 'content-len' : 0,
@@ -445,7 +451,7 @@ class Message:
         userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
         if not userPublicKey:
             return 3
-        newUserGroupKey = self._encrypt(groupPrivateKey,userPublicKey)
+        newUserGroupKey = self._encryptE2E(groupPrivateKey,userPublicKey)
         header = {
                 'request' : 'add-mem',
                 'guid' : self.request_content['guid'],
@@ -469,7 +475,7 @@ class Message:
             return 2
         global userSecret
         groupPrivateKey = self._decrypt(userGroupKey,userSecret)
-        content = self._encrypt(self.request_content['message-content'],groupPrivateKey)
+        content = self._encryptE2E(self.request_content['message-content'],groupPrivateKey)
         header = {
                 'content-len' : len(content),
                 'content-type' : self.request_content['content-type'], 
