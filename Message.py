@@ -2,12 +2,13 @@ import json
 import struct
 import sys
 import hashlib
-import app
+# import app
 from nacl.public import Box, PublicKey
 from nacl.encoding import Base64Encoder
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
                         # The program uses universal encoding
+e2ePrivateKey = None # User Private Key
 
 class Message:
     """This is the class to handle Encryption of messages. The format in which the message is sent to server is determined in this class
@@ -144,9 +145,11 @@ class Message:
         ########################################################
         ############### Pending Implementation #################
         ########################################################
-        box = Box(app.e2ePrivateKey, receiverPubkey)
-        msg = box.encrypt(msg)
-        return msg
+        print(msg,type(msg))
+        print(receiverPubkey , type(receiverPubkey))
+        box = Box(e2ePrivateKey, receiverPubkey)
+        encrypted_msg = box.encrypt(msg)
+        return encrypted_msg
     
     def _decrypt(self,msg, senderPubKey: PublicKey)->str:
         """ Function to decrypt the content accessible to users only
@@ -156,7 +159,7 @@ class Message:
         :param key: Key to use for decryption
         :type key: str
         """
-        box = Box(app.e2ePrivateKey, senderPubKey)
+        box = Box(e2ePrivateKey, senderPubKey)
         msg = box.encrypt(msg)
         return msg
 
@@ -359,7 +362,7 @@ class Message:
 
         self._recv_data_from_server(2, False)
         print(self._recvd_msg)
-        len_header = struct.unpack('>H',self._recvd_msg)
+        len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
         if 'key' not in header.keys():
@@ -379,7 +382,7 @@ class Message:
         if not recvr_key:
             return 1
         #send the message
-        print('recvr-key')
+        print(recvr_key)
         msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
         msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
         header = {

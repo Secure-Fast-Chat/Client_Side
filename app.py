@@ -23,6 +23,7 @@ host = "127.0.0.1"
 port = 8000
 
 global e2ePrivateKey
+e2ePrivateKey = Message.e2ePrivateKey
 
 ENCODING_USED = "utf-8" 
 
