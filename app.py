@@ -211,6 +211,6 @@ if __name__ == "__main__":
         events = sel.select(timeout = None)
         for key,mask in events:
             if(key.data['type'] == 'user-input'):
-                userInputHandler.handleUserInput()
+                userInputHandler.handleUserInput(conn_socket,box)
             else:
                 handleMessageFromServer(key.fileobj)

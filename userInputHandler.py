@@ -15,7 +15,7 @@ def checkValidityOfUID(uid):
         return False
     return True
 
-def sendMessage(cmd,content_type,socket):
+def sendMessage(cmd,content_type,socket,box):
     """ Parse the messsage to send to the required user
 
     :param cmd: The cmd written after "\send "
@@ -31,22 +31,22 @@ def sendMessage(cmd,content_type,socket):
         message = f.read()
         f.close()
     else:
-        global ENCODING_USED
-        message = message.encode(ENCODING_USED)
+        # global Message.ENCODING_USED
+        message = message.encode(Message.ENCODING_USED)
 
     request = {
             'message-content' : message ,
             'content-type' : content_type,
             'recvr-username' : username 
             }
-    msg = Message.Message(socket,'send-message',req)
+    msg = Message.Message(socket,'send-message',request,box)
     response = msg.processTask()
     if response == 0:
         return
     if response == 1:
         print(f"No user with userid: {username}")
 
-def sendGroupMessage(cmd,content_type,socket):
+def sendGroupMessage(cmd,content_type,socket,box):
     """ Parse the message to send to everyone in the group
 
     :param cmd: The cmd written after "\sendgrp "
@@ -70,7 +70,7 @@ def sendGroupMessage(cmd,content_type,socket):
             'content-type' : content_type ,
             'guid' : groupName 
             }
-    msg = Message.Message(socket,'send-group-message',req)
+    msg = Message.Message(socket,'send-group-message',req,box)
     response = msg.processTask()
     if response == 0:
         return
@@ -79,7 +79,7 @@ def sendGroupMessage(cmd,content_type,socket):
     if response == 2:
         print(f"No group with group name {groupName}")
 
-def createGroup(cmd,socket):
+def createGroup(cmd,socket,box):
     """ Create a group with the name cmd
 
     :param cmd: Group name
@@ -92,14 +92,14 @@ def createGroup(cmd,socket):
     if not is_valid:
         print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name")
         return
-    response = Message.Message(socket,'create-grp',cmd).processTask()
+    response = Message.Message(socket,'create-grp',cmd,box).processTask()
     
     if response == 0:
         print("Successfully Created Group")
     elif response == 1:
         print("Group with this id already exists. Couldn't create group.")
 
-def addMemberInGroup(cmd,socket):
+def addMemberInGroup(cmd,socket,box):
     """ Function to add member in a group
 
     :param cmd: The part of command containing group name and new member userid
@@ -114,7 +114,7 @@ def addMemberInGroup(cmd,socket):
             'guid' : grpName,
             'new-uid' : userID
             }
-    response = Message.Message(socket,'add-mem',req).processTask()
+    response = Message.Message(socket,'add-mem',req,box).processTask()
     if response == 0:
         print("Successfully Created Group")
     elif response == 1:
@@ -124,21 +124,21 @@ def addMemberInGroup(cmd,socket):
     elif response == 3:
         print(f'There is no user with username: {userID}')
 
-def handleUserInput(socket):
+def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user
 
     """
 
     userInput = input()
     if '\\send ' == userInput[:6]:
-        sendMessage(userInput[6:],'text',socket)
+        sendMessage(userInput[6:],'text',socket,box)
     elif '\\sendfile ' == userInput[:10]:
-        sendMessage(userInput[10:],'file',socket)
+        sendMessage(userInput[10:],'file',socket,box)
     elif '\\sendgrp ' == userInput[:9]:
-        sendGroupMessage(userInput[9:],'text',socket)
+        sendGroupMessage(userInput[9:],'text',socket,box)
     elif '\\sendfilegrp ' == userInput[:13]:
-        sendGroupMessage(userInput[13:],'file',socket)
+        sendGroupMessage(userInput[13:],'file',socket,box)
     elif '\\mkgrp ' == userInput[:7]:
-        createGroup(userInput[7:],socket)
+        createGroup(userInput[7:],socket,box)
     elif '\\addmem ' == userInput[:8]:
-        addMemberInGroup(userInput[8:],socket)
+        addMemberInGroup(userInput[8:],socket,box)
