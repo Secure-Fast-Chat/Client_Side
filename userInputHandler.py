@@ -22,6 +22,8 @@ def sendMessage(cmd,content_type,socket,box):
     :type cmd: str
     :param socket: Connection socket
     :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     username = cmd.split(" ",1)[0]
@@ -51,8 +53,12 @@ def sendGroupMessage(cmd,content_type,socket,box):
 
     :param cmd: The cmd written after "\sendgrp "
     :type cmd: str
+    :param content_type: Type of message content, i.e. file or text. It is 'file' or 'text'
+    :type content_type: str
     :param socket: Connection socket
     :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     groupName = cmd.split(" ",1)[0]
@@ -86,6 +92,8 @@ def createGroup(cmd,socket,box):
     :type cmd: str
     :param socket: Socket which is connected to server
     :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     is_valid = checkValidityOfUID(cmd)
@@ -127,6 +135,10 @@ def addMemberInGroup(cmd,socket,box):
 def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user
 
+    :param socket: Socket for connection with server
+    :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     userInput = input()

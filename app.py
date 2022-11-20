@@ -114,7 +114,8 @@ def signup(sock, box):
     """Function to help user make new account
 
     :return: Socket with which user is connected to server
-    :rtype: socket.socket"""
+    :rtype: socket.socket
+    """
 
     username = input("Please enter username: ")
     print("Checking for availability of Username ... ")
@@ -210,6 +211,7 @@ if __name__ == "__main__":
         # Blocks until any input is recieved
         events = sel.select(timeout = None)
         for key,mask in events:
+            # print('going good ',key)
             if(key.data['type'] == 'user-input'):
                 userInputHandler.handleUserInput(conn_socket,box)
             else:

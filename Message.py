@@ -66,14 +66,17 @@ class Message:
         :param size: Length of content to recieve from server
         :type size: int
         """
+
         if size<20:
             encrypted=False # Since the nonce itself must be atleast 24 bits long, this should never happen
-        self._recvd_msg = self.socket.recv(size)
+        self._recvd_msg = b''
+        while len(self._recvd_msg) < size:
+            self._recvd_msg += self.socket.recv(size-len(self._recvd_msg))
         if encrypted:
             self._recvd_msg = self.box.decrypt(self._recvd_msg)
         return
 
-    def _json_encode(self, obj, encoding):
+    def _json_encode(self, obj, encoding=ENCODING_USED):
         """Function to encode dictionary to bytes object
 
         :param obj: dictionary to encode
@@ -85,7 +88,7 @@ class Message:
 
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
 
-    def _json_decode(self, obj, encoding):
+    def _json_decode(self, obj, encoding = ENCODING_USED):
         """Function to decode bytes object to dictionary
 
         :param obj: Encoded json data
@@ -113,7 +116,6 @@ class Message:
         passwd = passwd.encode(ENCODING_USED)
         return hashlib.sha256(passwd).hexdigest()
         
-
     def _encode(self,text,key):
         """ Function to encode the text using key from server
 
@@ -315,14 +317,14 @@ class Message:
         self._send_data_to_server()
  
     def _recvmsg(self):
-        """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-len','byteorder' as the keys
+        """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-length','byteorder' as the keys
         """
 
         self._recv_data_from_server(2, False)
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
-        self._recv_data_from_server(header['content-len'])
+        self._recv_data_from_server(header['content-length'])
         msg_content = self._recvd_msg
         senderKey = PublicKey(header["sender_e2e_public_key"], encoder=Base64Encoder)
         msg_content = self._decrypt(msg_content, senderKey)
@@ -344,10 +346,10 @@ class Message:
         :rtype: bytes
         """
         header = {
-                'byteorder' : sys.byteorder() ,
+                'byteorder' : sys.byteorder ,
                 'request' : 'get-key' ,
                 'recvr-username' : uid,
-                'content-len' : 0
+                'content-length' : 0
                 }
         header = self._json_encode(header)
         header = self._encrypt_server(header)
@@ -356,6 +358,7 @@ class Message:
         self._send_data_to_server()
 
         self._recv_data_from_server(2, False)
+        print(self._recvd_msg)
         len_header = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
@@ -372,18 +375,19 @@ class Message:
         # Left to check the availability of uid and other minor edge cases #
         ####################################################################
 
-        recvr_key = self._get_user_public_key(self.request_content['username'])
+        recvr_key = self._get_user_public_key(self.request_content['recvr-username'])
         if not recvr_key:
             return 1
         #send the message
+        print('recvr-key')
         msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
         msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
         header = {
-                'byteorder' : sys.byteorder(),
+                'byteorder' : sys.byteorder,
                 'request' : 'send-msg',
                 'content-type' : self.request_content['content-type'],
                 'rcvr-uid' : self.request_content['content_type'],
-                'content-len' : len(msg)
+                'content-length' : len(msg)
                 }
         header = self._json_encode(header)
         protoheader = struct.pack('>H',len(header))
@@ -403,7 +407,7 @@ class Message:
         group_key = self._encryptE2E(group_private_key,encryption_key)
         header = {
                 'guid' : group_name,
-                'content-len' : 0,
+                'content-length' : 0,
                 'group-key' : group_key
                 }
         hdr = self._json_encode(header)
@@ -423,8 +427,8 @@ class Message:
 
         header = {
                 'request' : 'grp-key',
-                'content-len' : 0,
-                'byteorder' : sys.byteorder()
+                'content-length' : 0,
+                'byteorder' : sys.byteorder
                 }
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack(">H",len(hdr)) + hdr
@@ -478,7 +482,7 @@ class Message:
         groupPrivateKey = self._decrypt(userGroupKey,userSecret)
         content = self._encryptE2E(self.request_content['message-content'],groupPrivateKey)
         header = {
-                'content-len' : len(content),
+                'content-length' : len(content),
                 'content-type' : self.request_content['content-type'], 
                 'guid' : self.request_content['guid']
                 }
@@ -504,7 +508,7 @@ class Message:
             return self._keyex()
         if self.task == 'recv_msg':
             return self._recvmsg()
-        if self.task == 'send_msg':
+        if self.task == 'send-message':
             return self._sendmsg()
         if self.task == 'create-grp':
             return self._create_grp()
