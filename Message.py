@@ -419,14 +419,15 @@ class Message:
         group_name = self.request_content
         group_private_key = self._create_group_key()
         encryption_key = e2ePrivateKey #Group creator's (my) private key
-        group_key = self._encryptE2E(group_private_key,encryption_key.public_key) #encrypt using my private key and also my public key. Only I can ever decrypt this
+        group_key = self._encryptE2E(group_private_key,encryption_key.public_key).decode() #encrypt using my private key and also my public key. Only I can ever decrypt this
         header = {
                 'guid' : group_name,
                 'content-length' : 0,
-                'group-key' : group_key
+                'group-key' : group_key,
+                'request': 'create-grp',
                 }
         hdr = self._json_encode(header)
-        hdr = self._encrypt_server(header)
+        hdr = self._encrypt_server(hdr)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
