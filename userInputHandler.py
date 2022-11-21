@@ -124,7 +124,7 @@ def addMemberInGroup(cmd,socket,box):
             }
     response = Message.Message(socket,'add-mem',req,box).processTask()
     if response == 0:
-        print("Successfully Created Group")
+        print("Successfully Added New Member in Group")
     elif response == 1:
         print("There is no group with this name")
     elif response == 2:
