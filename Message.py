@@ -5,6 +5,7 @@ import sys
 import hashlib
 # import app
 from nacl.public import Box, PublicKey, PrivateKey
+from nacl.secret import SecretBox
 from nacl.encoding import Base64Encoder
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
@@ -330,8 +331,14 @@ class Message:
         header = self._json_decode(self._recvd_msg)
         self._recv_data_from_server(header['content-length'])
         msg_content = self._recvd_msg
-        senderKey = PublicKey(header["sender_e2e_public_key"], encoder=Base64Encoder)
-        msg_content = self._decrypt(msg_content, senderKey)
+        if header['sender-type'] == "user":
+            senderKey = PublicKey(header["sender_e2e_public_key"], encoder=Base64Encoder)
+            msg_content = self._decrypt(msg_content, senderKey)
+        else:
+            groupKey = header["groupkey"]
+            groupKey = self._decrypt(groupKey, header['creatorPubkey'])
+            box = SecretBox(groupKey)
+            msg_content = box.decrypt(msg_content)
         msg = {
                 'content' : msg_content,
                 'content-type' : header['content-type'],
@@ -426,7 +433,7 @@ class Message:
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _get_group_key(self, guid:str):
-        """Function to get the decrypted group private key from server.
+        """Function to get the encrypted group private key from server.
 
         :param guid: Group Name
         :type guid: str
@@ -449,7 +456,8 @@ class Message:
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
         if 'group-key' in header.keys():
-            groupCreatorsPubKey = header['creatorPubKey']
+            groupCreatorsPubKey = PublicKey(header['creatorPubKey'], encoder=Base64Encoder)
+
             box = Box(e2ePrivateKey, groupCreatorsPubKey)
             key = box.decrypt(header['group-key'], encoder=Base64Encoder) #Send the key after base64 encoding
             return key
@@ -462,13 +470,16 @@ class Message:
         :rtype: int
         """
 
-        groupPrivateKey = self._get_group_key(self.request_content['guid'])
-        if not groupPrivateKey:
+        groupKey = self._get_group_key(self.request_content['guid'])
+        if not groupKey:
             return 1
         userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
         if not userPublicKey:
             return 3
-        newUserGroupKey = self._encryptE2E(groupPrivateKey,userPublicKey)
+
+        # Encrypt the new users group private key using their public key and the group creators private key
+        box = Box(e2ePrivateKey, userPublicKey)
+        newUserGroupKey = box.encrypt(groupKey,encoder=Base64Encoder)
         header = {
                 'request' : 'add-mem',
                 'guid' : self.request_content['guid'],
