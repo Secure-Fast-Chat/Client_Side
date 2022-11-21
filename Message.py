@@ -23,6 +23,8 @@ class Message:
     :type _data_to_send: bytes
     :param _recvd_msg: Content recieved from server is stored here
     :type _recvd_msg: bytes
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     def __init__(self,conn_socket,task,request, box):
@@ -34,22 +36,14 @@ class Message:
         :type task: str
         :param request: Content to send to server
         :type request: str
+        :param box: Server Public Key and User Private Key
+        :type box: nacl.public.Box
         """
         self.task = task
         self.socket = conn_socket
         self.request_content = request
         self._data_to_send = b''
         self.box = box
-
-    def _encrypt_server(self, data):
-        """Encrypts the data
-
-        :param data: the data to encrypt
-        :type data: Any
-        :return: The data after encryption
-        :rtype: _type_
-        """
-        return self.box.encrypt(data)
 
     def _send_data_to_server(self):
         """ Function to send the string to the server. It sends content of _send_data_to_server to the server
@@ -61,11 +55,13 @@ class Message:
             left_message = left_message[bytes_sent:]
         return
 
-    def _recv_data_from_server(self,size,encrypted=True, authenticated=True):
+    def _recv_data_from_server(self,size,encrypted=True):
         """ Function to recv data from server. Stores the bytes recieved in a variable named _recvd_msg.
 
         :param size: Length of content to recieve from server
         :type size: int
+        :param encrypted: (optional, True) Is the information being recieved encrypted
+        :type encrypted: bool
         """
 
         if size<20:
@@ -85,7 +81,8 @@ class Message:
         :param encoding: Encoding to use
         :type encoding: str
         :return: Encoded obj
-        :rtype: bytes"""
+        :rtype: bytes
+        """
 
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
 
@@ -101,72 +98,64 @@ class Message:
 
         return json.loads(obj.decode(encoding))
 
+    def _encrypt_server(self, data):
+        """Encrypts the data
+
+        :param data: the data to encrypt
+        :type data: Any
+        :return: Encrypted data
+        :rtype: bytes
+        """
+        return self.box.encrypt(data)
+
     def _hash_password(self,passwd):
         """Function to salt and hash the password before sending to server
 
         :param passwd: Password to be hashed
         :type passwd: str
         :return: Transformed Password
-        :rtype: string
+        :rtype: str
         """
 
-        ###################################################
-        ########## Pending Implementation #################
-        ###################################################
         global ENCODING_USED
         passwd = passwd.encode(ENCODING_USED)
         return hashlib.sha256(passwd).hexdigest()
         
-    def _encode(self,text,key):
-        """ Function to encode the text using key from server
-
-        :param text: string to encode
-        :type text: str
-        :param key: key for encryption
-        :type key: str
-        :return: Encoded text
-        :rtype: str
-        """
-
-        ###################################################
-        ########## Pending Implementation #################
-        ###################################################
-        # Commented out instances of this for now, because we are sending the plain text password to the server for now, remember to uncomment them if we change minds
-        return text
-
-    def _encryptE2E(self,msg, receiverPubkey: PublicKey)->str:
+    def _encryptE2E(self,msg, receiverPubkey: nacl.public.PublicKey)->bytes:
         """ Encrypt the message to send to reciever
 
         :param msg: Message to encrypt
         :type msg: bytes
         :param receiverPubkey: Public Key of the other user
         :type receiverPubkey: nacl.public.PublicKey
+        :return: Message encrypted using receiver key
+        :rtype: bytes
         """
-        ########################################################
-        ############### Pending Implementation #################
-        ########################################################
+
         global e2ePrivateKey
         global ENCODING_USED
         box = Box(e2ePrivateKey, receiverPubkey)
-        encrypted_msg = box.encrypt(msg)
+        encrypted_msg = box.encrypt(msg,encoder=Base64Encoder)
         return encrypted_msg
     
-    def _decrypt(self,msg, senderPubKey: PublicKey)->str:
+    def _decrypt(self,msg, senderPubKey: PublicKey)->bytes:
         """ Function to decrypt the content accessible to users only
 
         :param msg: Content to decrypt
         :type msg: bytes
         :param key: Key to use for decryption
         :type key: str
+        :return: Decrypted Message
+        :rtype: bytes
         """
+
         box = Box(e2ePrivateKey, senderPubKey)
-        msg = box.decrypt(msg)
+        msg = box.decrypt(msg,encoder=Base64Encoder)
         return msg
 
     def _create_login_request(self):
         """ The jsonheader has the following keys: |
-        byteorder, request, content-length, content-encoding. The value for request is 'loginuid' |
-        The content has user id.
+        byteorder, request, content-encoding, username, password. The value for request is 'login' |
 
         :return: Message to send to server directly for login
         :rtype: bytes
@@ -190,7 +179,7 @@ class Message:
     def _create_signuppass_request(self):
         """ The jsonheader has the following keys: |
         byteorder, request, content-length, content-encoding. The value for request is 'signuppass' |
-        The content has encoded password
+        The content has encoded password and e2e public Key
 
         :return: Message to send to server directly for login
         :rtype: bytes
@@ -223,7 +212,7 @@ class Message:
         byteorder, request, content-length, content-encoding. The value for request is 'signupuid' |
         The content has user id.
 
-        :return: Message to send to server directly for login
+        :return: Message to send to server directly for signup request
         :rtype: bytes
         """
 
@@ -293,16 +282,23 @@ class Message:
         else:
             return 1
 
+    ################################################################
+    #################### Pending implementation ####################
+    ################################################################
     def _create_group_key(self):
         """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
 
         :return: private key
-        :rtype: bytes
+        :rtype: str
         """
         key = b'0'*16
         return key
 
     def _keyex(self):
+        """ Send public key to server for encryption of server->client interaction
+
+        """
+
         global ENCODING_USED
         publickey = self.request_content['key']
         jsonheader = {
@@ -320,7 +316,10 @@ class Message:
         self._send_data_to_server()
  
     def _recvmsg(self):
-        """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-length','byteorder' as the keys
+        """ Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have 'content','content-type','sender','content-length','byteorder','sender_e2e_public_key' as the keys
+
+        :return: The dictionary containing details of message.
+        :rtype: dict
         """
 
         self._recv_data_from_server(2, False)
@@ -346,7 +345,7 @@ class Message:
         :param uid: uid of user
         :type uid: str
         :return: key of user if found, None otherwise
-        :rtype: bytes
+        :rtype: nacl.public.PublicKey
         """
         header = {
                 'byteorder' : sys.byteorder ,
@@ -369,13 +368,15 @@ class Message:
         recvr_key = header['key']
         return PublicKey(recvr_key, encoder=Base64Encoder)
 
+    ####################################################################
+    # Left to check the availability of uid and other minor edge cases #
+    ####################################################################
     def _sendmsg(self):
         """ This function sends the message to the server
-        """
 
-        ####################################################################
-        # Left to check the availability of uid and other minor edge cases #
-        ####################################################################
+        :return: Exit status, 0 for success, 1 if no such uid
+        :rtype: int
+        """
 
         recvr_key = self._get_user_public_key(self.request_content['recvr-username'])
         if not recvr_key:
@@ -400,6 +401,8 @@ class Message:
     def _create_grp(self):
         """ Function to send a request to create a group
 
+        :return: exit status. 0 for success, 1 if group name already exists
+        :rtype: int
         """
 
         group_name = self.request_content
@@ -475,6 +478,7 @@ class Message:
         """Function to send message in a group
 
         :return: 0 for success, 1 for failure, 2 if not in group
+        :rtype: int
         """
 
         userGroupKey = self._get_group_key(self.request_content['guid'])

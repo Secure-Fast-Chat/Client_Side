@@ -31,12 +31,17 @@ welcome_message = """    1. Login using and existing account
     3. Quit
       Enter Your Command(1/2/3): """
 
-userSecret = None # This is the secret of the user
 serverkey = None # This is the public key of server to encrypt content to send to server
 privatekey = None # This is the private key of client for recieving content from server
 user_public_key = None # Public Key of user to encrypt messages being sent by other users
 
 def connectToServer():
+    """ Function to connect to server and exchange keys for encrypted connection
+
+    :return: Connection Socket and box with keys for decryption and encryption
+    :rtype: socket.socket,nacl.public.Box
+    """
+
     print("Connecting to server")
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
@@ -67,20 +72,13 @@ def connectToServer():
     
     return sock, box
 
-##################################################################
-#################### Pending Implementation ######################
-##################################################################
-def getUserSecretFromPassword(passwd):
-    """ Function to convert password to 'User Secret'
-
-    :param passwd: Password to convert
-    :type passwd: str
-    """
-    return passwd
-
 def login(sock, box):
     """Function to help user log in to the app
 
+    :param sock: Socket used for connection to server
+    :type sock: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     :return: Socket with which user is connected to server
     :rtype: socket.socket
     """
@@ -112,6 +110,10 @@ def login(sock, box):
 def signup(sock, box):
     """Function to help user make new account
 
+    :param sock: Socket used for connection to server
+    :type sock: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     :return: Socket with which user is connected to server
     :rtype: socket.socket
     """
@@ -151,6 +153,11 @@ def signup(sock, box):
 
 def handleMessageFromServer(socket,box):
     """ This function is called when there is a message from server....
+
+    :param sock: Socket used for connection to server
+    :type sock: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     msg = Message.Message(socket,'recv_msg','',box).processTask()

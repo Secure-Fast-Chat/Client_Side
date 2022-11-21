@@ -114,6 +114,8 @@ def addMemberInGroup(cmd,socket,box):
     :type cmd: str
     :param socket: Socket with active authorized connection to server
     :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
     """
 
     grpName = cmd.split(' ')[0]
