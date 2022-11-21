@@ -292,7 +292,8 @@ class Message:
         :return: private key
         :rtype: str
         """
-        key = PrivateKey.generate()
+        key = nacl.utils.random(nacl.secret.SecretBox.KEY_SIZE)
+
         return key
 
     def _keyex(self):
@@ -425,7 +426,7 @@ class Message:
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _get_group_key(self, guid:str):
-        """Function to get the encrypted group private key from server.
+        """Function to get the decrypted group private key from server.
 
         :param guid: Group Name
         :type guid: str
@@ -440,6 +441,7 @@ class Message:
                 'group-name': guid,
                 }
         hdr = self._json_encode(header)
+        header = self._encrypt_server(hdr)
         self._data_to_send = struct.pack(">H",len(hdr)) + hdr
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
@@ -447,21 +449,22 @@ class Message:
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
         if 'group-key' in header.keys():
-            return header['group-key']
+            groupCreatorsPubKey = header['creatorPubKey']
+            box = Box(e2ePrivateKey, groupCreatorsPubKey)
+            key = box.decrypt(header['group-key'], encoder=Base64Encoder) #Send the key after base64 encoding
+            return key
         return None
 
     def _add_member_in_group(self):
-        """ Function to add Member in a group
+        """ Function to add Member in a group. Will be accepted by the server only if I am the owner of the group
 
         :return: Exit status to tell the status
         :rtype: int
         """
 
-        userGroupKey = self._get_group_key(self.request_content['guid'])
-        if not userGroupKey:
+        groupPrivateKey = self._get_group_key(self.request_content['guid'])
+        if not groupPrivateKey:
             return 1
-        global userSecret
-        groupPrivateKey = self._decrypt(userGroupKey,userSecret)
         userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
         if not userPublicKey:
             return 3
@@ -473,6 +476,7 @@ class Message:
                 'user-grp-key' : newUserGroupKey
                 }
         hdr = self._json_encode(header)
+        hdr = self._encrypt_server(hdr)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr
         self._send_data_to_server()
         self._recv_data_from_server(2, False) # 0 for success and 2 if not admin
@@ -485,18 +489,19 @@ class Message:
         :rtype: int
         """
 
-        userGroupKey = self._get_group_key(self.request_content['guid'])
-        if not userGroupKey:
+        groupPrivateKey = self._get_group_key(self.request_content['guid'])
+        if not groupPrivateKey:
             return 2
-        global userSecret
-        groupPrivateKey = self._decrypt(userGroupKey,userSecret)
-        content = self._encryptE2E(self.request_content['message-content'],groupPrivateKey)
+        box = nacl.secret.SecretBox(groupPrivateKey)
+
+        content = box.encrypt(self.request_content['message-content'], encoder=Base64Encoder)
         header = {
                 'content-length' : len(content),
                 'content-type' : self.request_content['content-type'], 
                 'guid' : self.request_content['guid']
                 }
         hdr = self._json_encode(header)
+        hdr = self._encrypt_server(hdr)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr + content
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
