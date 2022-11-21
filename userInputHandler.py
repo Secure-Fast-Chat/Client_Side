@@ -1,4 +1,5 @@
 import Message
+import sys
 import nacl
 import re
 
@@ -157,3 +158,5 @@ def handleUserInput(socket,box):
         createGroup(userInput[7:],socket,box)
     elif '\\addmem ' == userInput[:8]:
         addMemberInGroup(userInput[8:],socket,box)
+    print("\033[1A\033[K",end = '')
+    sys.stdout.flush()

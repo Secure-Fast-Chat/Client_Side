@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 import Message
 import selectors
@@ -91,7 +92,6 @@ def login(sock, box):
     message = Message.Message(sock,'login',{'userid' : uid , 'password' : passwd}, box)
     response = message.processTask()
     if(response == 0):
-        userSecret = getUserSecretFromPassword(passwd)
         print("Successfully Logged In")
         Message.e2ePrivateKey = PrivateKey(hashlib.sha256((uid+passwd).encode("utf-8")).digest())
         return sock
@@ -176,7 +176,8 @@ def handleMessageFromServer(socket,box):
     f = open(os.path.expanduser('~')+'/SecureFastChatMessages.txt','a')
     f.write(to_print+'\n')
 
-    print('\033[1;2H'+to_print+'\033[10;1H')
+    print('\033[s\033[3B'+to_print.strip() + '\033[K\033[u',end = '')
+    sys.stdout.flush()
 
 if __name__ == "__main__":
     os.system('clear')
@@ -209,6 +210,7 @@ if __name__ == "__main__":
     except:
         raise
 
+    # print("\n\n\n")
     # Setting up selectors for handling user-inputs and recieving messages
     sel.register(0,selectors.EVENT_READ,data = {'type':'user-input', 'box':box})
     sel.register(conn_socket,selectors.EVENT_READ,data = {'type':'socket', 'box':box})

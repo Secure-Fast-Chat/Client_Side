@@ -338,6 +338,8 @@ class Message:
                 }
         if msg['content-type'] == 'text':
             msg['content'] = msg['content'].decode(ENCODING_USED)
+        # self._data_to_send = struct.pack('>H',0)
+        # self._send_data_to_server()
         return msg
 
     def _get_user_public_key(self,uid):
