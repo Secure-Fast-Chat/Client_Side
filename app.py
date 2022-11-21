@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import Message
 import selectors
 import getpass
@@ -155,16 +156,18 @@ def handleMessageFromServer(socket,box):
     msg = Message.Message(socket,'recv_msg','',box).processTask()
     to_print = ''
     if(msg['content-type'] == 'file'):
-        filename = 'SecureFastChat_'+msg['sender'] + datetime.datetime.now
+        filename = 'SecureFastChat_'+msg['sender'] + datetime.now().strftime("%H:%M:%S")
         f = open(filename,'wb')
         f.write(msg['content'])
         f.close()
-        to_print = 'You recieved a file from ' + msg['sender'] + '. It is saved in current directory with filename: ' + os.sytem('pwd') + filename
+        print(type(msg['sender']))
+        print(type(filename))
+        to_print = 'You recieved a file from ' + msg['sender'] + '. The address to access file is: ' + os.getcwd() + filename
     else:
-        to_print = '[' + msg['sender'] + ' : ' + datetime.datetime.now + ']: ' + msg['content']
+        to_print = '[' + msg['sender'] + ' : ' + datetime.now().strftime("%H:%M:%S") + ']: ' + msg['content']
 
-    f = open('~/SecureFastChatMessages','wa')
-    f.write(to_print)
+    f = open(os.path.expanduser('~')+'/SecureFastChatMessages.txt','a')
+    f.write(to_print+'\n')
 
     print('\033[1;2H'+to_print+'\033[10;1H')
 

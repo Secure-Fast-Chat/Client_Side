@@ -160,7 +160,7 @@ class Message:
         :type key: str
         """
         box = Box(e2ePrivateKey, senderPubKey)
-        msg = box.encrypt(msg)
+        msg = box.decrypt(msg)
         return msg
 
     def _create_login_request(self):
@@ -361,7 +361,6 @@ class Message:
         self._send_data_to_server()
 
         self._recv_data_from_server(2, False)
-        print(self._recvd_msg)
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
@@ -382,7 +381,6 @@ class Message:
         if not recvr_key:
             return 1
         #send the message
-        print(recvr_key)
         msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
         msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
         header = {
