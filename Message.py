@@ -449,11 +449,11 @@ class Message:
                 'group-name': guid,
                 }
         hdr = self._json_encode(header)
-        header = self._encrypt_server(hdr)
+        hdr = self._encrypt_server(hdr)
         self._data_to_send = struct.pack(">H",len(hdr)) + hdr
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
-        len_header = struct.unpack('>H',self._recvd_msg)
+        len_header, = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
         if 'group-key' in header.keys():
@@ -472,15 +472,17 @@ class Message:
         """
 
         groupKey = self._get_group_key(self.request_content['guid'])
+        print(groupKey)
         if not groupKey:
             return 1
         userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
+        print(userPublicKey)
         if not userPublicKey:
             return 3
 
         # Encrypt the new users group private key using their public key and the group creators private key
         box = Box(e2ePrivateKey, userPublicKey)
-        newUserGroupKey = box.encrypt(groupKey,encoder=Base64Encoder)
+        newUserGroupKey = box.encrypt(groupKey,encoder=Base64Encoder).decode()
         header = {
                 'request' : 'add-mem',
                 'guid' : self.request_content['guid'],
