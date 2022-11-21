@@ -140,13 +140,13 @@ class Message:
         :param msg: Message to encrypt
         :type msg: bytes
         :param receiverPubkey: Public Key of the other user
-        :type receiverPubkey: str
+        :type receiverPubkey: nacl.public.PublicKey
         """
         ########################################################
         ############### Pending Implementation #################
         ########################################################
-        print(msg,type(msg))
-        print(receiverPubkey , type(receiverPubkey))
+        global e2ePrivateKey
+        global ENCODING_USED
         box = Box(e2ePrivateKey, receiverPubkey)
         encrypted_msg = box.encrypt(msg)
         return encrypted_msg
@@ -389,12 +389,13 @@ class Message:
                 'byteorder' : sys.byteorder,
                 'request' : 'send-msg',
                 'content-type' : self.request_content['content-type'],
-                'rcvr-uid' : self.request_content['content_type'],
+                'rcvr-uid' : self.request_content['recvr-username'],
                 'content-length' : len(msg)
                 }
-        header = self._json_encode(header)
-        protoheader = struct.pack('>H',len(header))
-        self._data_to_send = protoheader + header + msg
+        encoded_json_header = self._json_encode(header)
+        encrypted_header = self._encrypt_server(encoded_json_header)
+        protoheader = struct.pack('>H',len(encrypted_header))
+        self._data_to_send = protoheader + encrypted_header + msg
         self._send_data_to_server()
         return 0
 

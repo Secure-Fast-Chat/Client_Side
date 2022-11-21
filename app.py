@@ -22,8 +22,6 @@ start_up_banner = """
 host = "127.0.0.1"
 port = 8000
 
-global e2ePrivateKey
-e2ePrivateKey = Message.e2ePrivateKey
 
 ENCODING_USED = "utf-8" 
 
@@ -96,8 +94,7 @@ def login(sock, box):
     if(response == 0):
         userSecret = getUserSecretFromPassword(passwd)
         print("Successfully Logged In")
-        global e2ePrivateKey
-        e2ePrivateKey = PrivateKey(hashlib.sha256((uid+passwd).encode("utf-8")).digest())
+        Message.e2ePrivateKey = PrivateKey(hashlib.sha256((uid+passwd).encode("utf-8")).digest())
         return sock
     elif response == 1:
         print("Invalid User Id. Try Again")
@@ -136,27 +133,26 @@ def signup(sock, box):
         password1 = getpass.getpass(prompt = "Enter Password: ")
         password2 = getpass.getpass(prompt = "Re-Enter Password: ")
 
-    global e2ePrivateKey
-    e2ePrivateKey = PrivateKey(hashlib.sha256((username+password1).encode("utf-8")).digest()) 
-    message = Message.Message(sock,'signuppass',{'password' :password1, "e2eKey":e2ePrivateKey.public_key.encode(Base64Encoder).decode()}, box)
+    Message.e2ePrivateKey = PrivateKey(hashlib.sha256((username+password1).encode("utf-8")).digest()) 
+    message = Message.Message(sock,'signuppass',{'password' :password1, "e2eKey":Message.e2ePrivateKey.public_key.encode(Base64Encoder).decode()}, box)
     response = message.processTask()
     if response == 1:
         print("Account created successfully. Now you can login to your new account.\n")
         return login(sock, box)
     elif response == 2:
         print("Unable to signup. Please try Again.")
-        e2ePrivateKey = None
+        Message.e2ePrivateKey = None
         return signup(sock, box)
     ##############################################################################################
     else:
         raise Exception("Why this Error in app.py -> signup()?") # Remove this if everything works correctly
     ##############################################################################################
 
-def handleMessageFromServer(socket):
+def handleMessageFromServer(socket,box):
     """ This function is called when there is a message from server....
     """
 
-    msg = Message.Message(socket,'recv_msg','').processTask()
+    msg = Message.Message(socket,'recv_msg','',box).processTask()
     to_print = ''
     if(msg['content-type'] == 'file'):
         filename = 'SecureFastChat_'+msg['sender'] + datetime.datetime.now
@@ -216,4 +212,4 @@ if __name__ == "__main__":
             if(key.data['type'] == 'user-input'):
                 userInputHandler.handleUserInput(conn_socket,box)
             else:
-                handleMessageFromServer(key.fileobj)
+                handleMessageFromServer(key.fileobj,box)
