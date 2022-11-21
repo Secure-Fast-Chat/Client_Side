@@ -4,7 +4,7 @@ import struct
 import sys
 import hashlib
 # import app
-from nacl.public import Box, PublicKey
+from nacl.public import Box, PublicKey, PrivateKey
 from nacl.encoding import Base64Encoder
 PROTOHEADER_LENGTH = 2 # to store length of protoheader
 ENCODING_USED = "utf-8" # to store the encoding used
@@ -292,7 +292,7 @@ class Message:
         :return: private key
         :rtype: str
         """
-        key = b'0'*16
+        key = PrivateKey.generate()
         return key
 
     def _keyex(self):
@@ -410,21 +410,21 @@ class Message:
 
         group_name = self.request_content
         group_private_key = self._create_group_key()
-        global user_public_key
-        encryption_key = user_public_key
-        group_key = self._encryptE2E(group_private_key,encryption_key)
+        encryption_key = e2ePrivateKey #Group creator's (my) private key
+        group_key = self._encryptE2E(group_private_key,encryption_key.public_key) #encrypt using my private key and also my public key. Only I can ever decrypt this
         header = {
                 'guid' : group_name,
                 'content-length' : 0,
                 'group-key' : group_key
                 }
         hdr = self._json_encode(header)
+        hdr = self._encrypt_server(header)
         self._data_to_send = struct.pack('>H',len(hdr)) + hdr
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
-    def _get_group_key(self,guid):
+    def _get_group_key(self, guid:str):
         """Function to get the encrypted group private key from server.
 
         :param guid: Group Name
@@ -436,7 +436,8 @@ class Message:
         header = {
                 'request' : 'grp-key',
                 'content-length' : 0,
-                'byteorder' : sys.byteorder
+                'byteorder' : sys.byteorder,
+                'group-name': guid,
                 }
         hdr = self._json_encode(header)
         self._data_to_send = struct.pack(">H",len(hdr)) + hdr
