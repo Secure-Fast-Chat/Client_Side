@@ -1,16 +1,17 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Index &#8212; Secure Fast Chat: Client Program  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -37,7 +38,6 @@
  <a href="#_"><strong>_</strong></a>
  | <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
- | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -55,9 +55,7 @@
 </li>
       <li><a href="Message.html#Message.Message._create_grp">_create_grp() (Message.Message method)</a>
 </li>
-      <li><a href="Message.html#Message.Message._create_loginpass_request">_create_loginpass_request() (Message.Message method)</a>
-</li>
-      <li><a href="Message.html#Message.Message._create_loginuid_request">_create_loginuid_request() (Message.Message method)</a>
+      <li><a href="Message.html#Message.Message._create_login_request">_create_login_request() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._create_signuppass_request">_create_signuppass_request() (Message.Message method)</a>
 </li>
@@ -65,9 +63,9 @@
 </li>
       <li><a href="Message.html#Message.Message._decrypt">_decrypt() (Message.Message method)</a>
 </li>
-      <li><a href="Message.html#Message.Message._encode">_encode() (Message.Message method)</a>
+      <li><a href="Message.html#Message.Message._encrypt_server">_encrypt_server() (Message.Message method)</a>
 </li>
-      <li><a href="Message.html#Message.Message._encrypt">_encrypt() (Message.Message method)</a>
+      <li><a href="Message.html#Message.Message._encryptE2E">_encryptE2E() (Message.Message method)</a>
 </li>
       <li><a href="Message.html#Message.Message._get_group_key">_get_group_key() (Message.Message method)</a>
 </li>
@@ -129,14 +127,6 @@
       <li><a href="app.html#app.connectToServer">connectToServer() (in module app)</a>
 </li>
       <li><a href="userInputHandler.html#userInputHandler.createGroup">createGroup() (in module userInputHandler)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="G">G</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="app.html#app.getUserSecretFromPassword">getUserSecretFromPassword() (in module app)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -242,7 +232,7 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Client_Side</a></li>
 </ul>
@@ -258,12 +248,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -280,7 +270,7 @@
       &copy;2022, Khushang Singla	Mridul Agarwal	Arhaan Ahmad.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

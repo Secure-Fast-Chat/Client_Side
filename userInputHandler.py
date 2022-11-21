@@ -1,4 +1,5 @@
 import Message
+import nacl
 import re
 
 def checkValidityOfUID(uid):

@@ -5,55 +5,50 @@
 \let\spxextra \sphinxstyleindexextra
 
   \bigletter {\sphinxsymbolsname}
-  \item \spxentry{\_add\_member\_in\_group()}\spxextra{Message.Message method}, \hyperpage{4}
-  \item \spxentry{\_create\_group\_key()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_add\_member\_in\_group()}\spxextra{Message.Message method}, \hyperpage{5}
+  \item \spxentry{\_create\_group\_key()}\spxextra{Message.Message method}, \hyperpage{4}
   \item \spxentry{\_create\_grp()}\spxextra{Message.Message method}, \hyperpage{4}
-  \item \spxentry{\_create\_loginpass\_request()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_create\_loginuid\_request()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_create\_login\_request()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}, \hyperpage{3}
   \item \spxentry{\_create\_signupuid\_request()}\spxextra{Message.Message method}, \hyperpage{3}
-  \item \spxentry{\_decrypt()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_encode()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_encrypt()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_get\_group\_key()}\spxextra{Message.Message method}, \hyperpage{4}
-  \item \spxentry{\_get\_user\_public\_key()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_decrypt()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_encryptE2E()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_encrypt\_server()}\spxextra{Message.Message method}, \hyperpage{2}
+  \item \spxentry{\_get\_group\_key()}\spxextra{Message.Message method}, \hyperpage{5}
+  \item \spxentry{\_get\_user\_public\_key()}\spxextra{Message.Message method}, \hyperpage{4}
   \item \spxentry{\_hash\_password()}\spxextra{Message.Message method}, \hyperpage{2}
-  \item \spxentry{\_json\_decode()}\spxextra{Message.Message method}, \hyperpage{1}
+  \item \spxentry{\_json\_decode()}\spxextra{Message.Message method}, \hyperpage{2}
   \item \spxentry{\_json\_encode()}\spxextra{Message.Message method}, \hyperpage{1}
-  \item \spxentry{\_keyex()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_keyex()}\spxextra{Message.Message method}, \hyperpage{4}
   \item \spxentry{\_login()}\spxextra{Message.Message method}, \hyperpage{3}
   \item \spxentry{\_recv\_data\_from\_server()}\spxextra{Message.Message method}, \hyperpage{1}
-  \item \spxentry{\_recvmsg()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_recvmsg()}\spxextra{Message.Message method}, \hyperpage{4}
   \item \spxentry{\_send\_data\_to\_server()}\spxextra{Message.Message method}, \hyperpage{1}
-  \item \spxentry{\_send\_message\_in\_group()}\spxextra{Message.Message method}, \hyperpage{4}
-  \item \spxentry{\_sendmsg()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_send\_message\_in\_group()}\spxextra{Message.Message method}, \hyperpage{5}
+  \item \spxentry{\_sendmsg()}\spxextra{Message.Message method}, \hyperpage{4}
   \item \spxentry{\_signuppass()}\spxextra{Message.Message method}, \hyperpage{3}
-  \item \spxentry{\_signupuid()}\spxextra{Message.Message method}, \hyperpage{3}
+  \item \spxentry{\_signupuid()}\spxextra{Message.Message method}, \hyperpage{4}
 
   \indexspace
   \bigletter A
-  \item \spxentry{addMemberInGroup()}\spxextra{in module userInputHandler}, \hyperpage{5}
+  \item \spxentry{addMemberInGroup()}\spxextra{in module userInputHandler}, \hyperpage{7}
   \item \spxentry{app}
-    \subitem \spxentry{module}, \hyperpage{4}
+    \subitem \spxentry{module}, \hyperpage{5}
 
   \indexspace
   \bigletter C
-  \item \spxentry{checkValidityOfUID()}\spxextra{in module userInputHandler}, \hyperpage{5}
-  \item \spxentry{connectToServer()}\spxextra{in module app}, \hyperpage{4}
-  \item \spxentry{createGroup()}\spxextra{in module userInputHandler}, \hyperpage{5}
-
-  \indexspace
-  \bigletter G
-  \item \spxentry{getUserSecretFromPassword()}\spxextra{in module app}, \hyperpage{4}
+  \item \spxentry{checkValidityOfUID()}\spxextra{in module userInputHandler}, \hyperpage{6}
+  \item \spxentry{connectToServer()}\spxextra{in module app}, \hyperpage{5}
+  \item \spxentry{createGroup()}\spxextra{in module userInputHandler}, \hyperpage{7}
 
   \indexspace
   \bigletter H
-  \item \spxentry{handleMessageFromServer()}\spxextra{in module app}, \hyperpage{4}
-  \item \spxentry{handleUserInput()}\spxextra{in module userInputHandler}, \hyperpage{5}
+  \item \spxentry{handleMessageFromServer()}\spxextra{in module app}, \hyperpage{6}
+  \item \spxentry{handleUserInput()}\spxextra{in module userInputHandler}, \hyperpage{7}
 
   \indexspace
   \bigletter L
-  \item \spxentry{login()}\spxextra{in module app}, \hyperpage{4}
+  \item \spxentry{login()}\spxextra{in module app}, \hyperpage{5}
 
   \indexspace
   \bigletter M
@@ -61,23 +56,23 @@
     \subitem \spxentry{module}, \hyperpage{1}
   \item \spxentry{Message}\spxextra{class in Message}, \hyperpage{1}
   \item \spxentry{module}
-    \subitem \spxentry{app}, \hyperpage{4}
+    \subitem \spxentry{app}, \hyperpage{5}
     \subitem \spxentry{Message}, \hyperpage{1}
-    \subitem \spxentry{userInputHandler}, \hyperpage{5}
+    \subitem \spxentry{userInputHandler}, \hyperpage{6}
 
   \indexspace
   \bigletter P
-  \item \spxentry{processTask()}\spxextra{Message.Message method}, \hyperpage{4}
+  \item \spxentry{processTask()}\spxextra{Message.Message method}, \hyperpage{5}
 
   \indexspace
   \bigletter S
-  \item \spxentry{sendGroupMessage()}\spxextra{in module userInputHandler}, \hyperpage{5}
-  \item \spxentry{sendMessage()}\spxextra{in module userInputHandler}, \hyperpage{5}
-  \item \spxentry{signup()}\spxextra{in module app}, \hyperpage{4}
+  \item \spxentry{sendGroupMessage()}\spxextra{in module userInputHandler}, \hyperpage{7}
+  \item \spxentry{sendMessage()}\spxextra{in module userInputHandler}, \hyperpage{6}
+  \item \spxentry{signup()}\spxextra{in module app}, \hyperpage{6}
 
   \indexspace
   \bigletter U
   \item \spxentry{userInputHandler}
-    \subitem \spxentry{module}, \hyperpage{5}
+    \subitem \spxentry{module}, \hyperpage{6}
 
 \end{sphinxtheindex}

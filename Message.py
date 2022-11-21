@@ -1,4 +1,5 @@
 import json
+import nacl
 import struct
 import sys
 import hashlib
