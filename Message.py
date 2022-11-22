@@ -374,7 +374,7 @@ class Message:
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
-        if 'key' not in header.keys():
+        if not header['key']:
             return None
         recvr_key = header['key']
         return PublicKey(recvr_key, encoder=Base64Encoder)
