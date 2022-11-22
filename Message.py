@@ -1,4 +1,5 @@
 import json
+import datetime
 import nacl
 import struct
 import sys
@@ -286,9 +287,6 @@ class Message:
         else:
             return 1
 
-    ################################################################
-    #################### Pending implementation ####################
-    ################################################################
     def _create_group_key(self):
         """ Function to get the Private key of group to use it to encrypt the messages being sent in groups
 
@@ -345,7 +343,8 @@ class Message:
         msg = {
                 'content' : msg_content,
                 'content-type' : header['content-type'],
-                'sender' : header['sender']
+                'sender' : header['sender'] ,
+                'timestamp' : datetime.datetime.fromtimestamp(header['timestamp'])
                 }
         if msg['content-type'] == 'text':
             msg['content'] = msg['content'].decode(ENCODING_USED)

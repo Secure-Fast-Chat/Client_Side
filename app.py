@@ -169,13 +169,13 @@ def handleMessageFromServer(socket,box):
     msg = Message.Message(socket,'recv_msg','',box).processTask()
     to_print = ''
     if(msg['content-type'] == 'file'):
-        filename = 'SecureFastChat_'+msg['sender'] + datetime.now().strftime("%H:%M:%S")
+        filename = 'SecureFastChat_'+msg['sender'] + msg['timestamp'].strftime("%D/%M/%Y - %H:%M:%S")
         f = open(filename,'wb')
         f.write(msg['content'])
         f.close()
         to_print = 'You recieved a file from ' + msg['sender'] + '. The address to access file is: ' + os.getcwd() + filename
     else:
-        to_print = '[' + msg['sender'] + ' : ' + datetime.now().strftime("%H:%M:%S") + ']: ' + msg['content']
+        to_print = '[' + msg['sender'] + ' : ' + msg['timestamp'].strftime("%d/%m/%Y - %H:%M:%S") + ']: ' + msg['content']
 
     f = open(os.path.join(os.path.expanduser('~'),'SecureFastChatMessages.txt'),'a')
     f.write(to_print+'\n')
