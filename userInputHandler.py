@@ -1,4 +1,5 @@
 import Message
+import datetime
 import os
 import sys
 import nacl
@@ -18,6 +19,14 @@ def checkValidityOfUID(uid):
         return False
     return True
 
+def updateLogs(logs):
+    print("\033[3A",end='')
+    print(logs,end='')
+    print("\033[K\n\033[2B",end='')
+    f = open("SecureFastChatlogs.txt",'a')
+    f.write(logs+'\n')
+    f.close()
+
 def sendMessage(cmd,content_type,socket,box):
     """ Parse the messsage to send to the required user
 
@@ -29,11 +38,13 @@ def sendMessage(cmd,content_type,socket,box):
     :type box: nacl.public.Box
     """
 
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
     username = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
         if not os.path.exists(message):
-            print("\033[3A"+"Couldn't find file : "+message+"\033[K\n\033[2B",end = '')
+            log += "Couldn't find file : "+message
+            updateLogs(log)
             return
         f = open(message,'rb')
         message = f.read()
@@ -50,9 +61,10 @@ def sendMessage(cmd,content_type,socket,box):
     msg = Message.Message(socket,'send-message',request,box)
     response = msg.processTask()
     if response == 0:
-        return
+        log += "Message Sent Successfully"
     if response == 1:
-        print("\033[3A"+"No user with userid: {username}"+"\033[K\n\033[2B",end = '')
+        log +="No user with userid: "+username
+    updateLogs(log)
 
 def sendGroupMessage(cmd,content_type,socket,box):
     """ Parse the message to send to everyone in the group
@@ -67,11 +79,13 @@ def sendGroupMessage(cmd,content_type,socket,box):
     :type box: nacl.public.Box
     """
 
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
     groupName = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
         if not os.path.exists(message):
-            print("\033[3A"+"Couldn't find file : "+message+"\033[K\n\033[2B",end = '')
+            log += "Couldn't find file : "+message
+            updateLogs(log)
             return
         f = open(message,'rb')
         message = f.read()
@@ -87,11 +101,12 @@ def sendGroupMessage(cmd,content_type,socket,box):
     msg = Message.Message(socket,'send-group-message',request,box)
     response = msg.processTask()
     if response == 0:
-        return
+        log += "Message Sent Successfully"
     if response == 1:
-        print("\033[3A"+"Couldn't Send"+"\033[K\n\033[2B",end = '')
+        log += "Couldn't Send"
     if response == 2:
-        print("\033[3A"+"No group with group name "+groupName+"\033[K\n\033[2B",end = '')
+        log += "No group with group name "+groupName
+    updateLogs(log)
 
 def createGroup(cmd,socket,box):
     """ Create a group with the name cmd
@@ -104,22 +119,19 @@ def createGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
     is_valid = checkValidityOfUID(cmd)
     if not is_valid:
-        print("\033[3A",end = '')
-        print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "Invalid UID for group. Please use only alphabets, numbers or _ in the group name"
+        updateLogs(log)
         return
     response = Message.Message(socket,'create-grp',cmd,box).processTask()
     
     if response == 0:
-        print("\033[3A",end='')
-        print("Successfully Created Group",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "Successfully Created Group"
     elif response == 1:
-        print("\033[3A",end='')
-        print("Group with this id already exists. Couldn't create group.",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "Group with this id already exists. Couldn't create group."
+    updateLogs(log)
 
 def addMemberInGroup(cmd,socket,box):
     """ Function to add member in a group
@@ -140,21 +152,14 @@ def addMemberInGroup(cmd,socket,box):
             }
     response = Message.Message(socket,'add-mem',req,box).processTask()
     if response == 0:
-        print("\033[3A",end='')
-        print("Successfully Added New Member in Group",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "Successfully Added New Member in Group"
     elif response == 1:
-        print("\033[3A",end='')
-        print("There is no group with this name",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "There is no group with this name"
     elif response == 2:
-        print("\033[3A",end='')
-        print("You are not authorized to add Members in this group",end='')
-        print("\033[K\n\033[2B",end='')
+        log += "You are not authorized to add Members in this group"
     elif response == 3:
-        print("\033[3A",end='')
-        print(f'There is no user with username: {userID}',end='')
-        print("\033[K\n\033[2B",end='')
+        log += 'There is no user with username: ' + userID
+    updateLogs(log)
 
 def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user

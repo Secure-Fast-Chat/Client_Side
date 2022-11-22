@@ -458,9 +458,8 @@ class Message:
         len_header, = struct.unpack('>H',self._recvd_msg)
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg)
-        if 'group-key' in header.keys():
+        if header['group-key']:
             groupCreatorsPubKey = PublicKey(header['creatorPubKey'], encoder=Base64Encoder)
-
             box = Box(e2ePrivateKey, groupCreatorsPubKey)
             key = box.decrypt(header['group-key'], encoder=Base64Encoder) #Send the key after base64 encoding
             return key
