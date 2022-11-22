@@ -509,7 +509,9 @@ class Message:
         box = nacl.secret.SecretBox(groupPrivateKey)
 
         content = box.encrypt(self.request_content['message-content'], encoder=Base64Encoder)
+        content = self._encrypt_server(content)
         header = {
+                'request': 'send-group-message',
                 'content-length' : len(content),
                 'content-type' : self.request_content['content-type'], 
                 'guid' : self.request_content['guid']
