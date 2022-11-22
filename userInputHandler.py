@@ -31,6 +31,9 @@ def sendMessage(cmd,content_type,socket,box):
     username = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
+        if not os.path.exists(message):
+            print("\033[3A"+f"Couldn't find file : {message}"+"\033[K\n\033[2B",end = '')
+            return
         f = open(message,'rb')
         message = f.read()
         f.close()
@@ -48,7 +51,7 @@ def sendMessage(cmd,content_type,socket,box):
     if response == 0:
         return
     if response == 1:
-        print(f"No user with userid: {username}")
+        print(f"\033[3A"+"No user with userid: {username}"+"\033[K\n\033[2B",end = '')
 
 def sendGroupMessage(cmd,content_type,socket,box):
     """ Parse the message to send to everyone in the group
@@ -66,6 +69,9 @@ def sendGroupMessage(cmd,content_type,socket,box):
     groupName = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
+        if not os.path.exists(message):
+            print("\033[3A"+f"Couldn't find file : {message}"+"\033[K\n\033[2B",end = '')
+            return
         f = open(message,'rb')
         message = f.read()
         f.close()
@@ -82,9 +88,9 @@ def sendGroupMessage(cmd,content_type,socket,box):
     if response == 0:
         return
     if response == 1:
-        print("Couldn't send")
+        print("\033[3A"+"Couldn't Send"+"\033[K\n\033[2B",end = '')
     if response == 2:
-        print(f"No group with group name {groupName}")
+        print("\033[3A"+f"No group with group name {groupName}"+"\033[K\n\033[2B",end = '')
 
 def createGroup(cmd,socket,box):
     """ Create a group with the name cmd
@@ -99,14 +105,20 @@ def createGroup(cmd,socket,box):
 
     is_valid = checkValidityOfUID(cmd)
     if not is_valid:
-        print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name")
+        print("\033[3A"+,end = '')
+        print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name",end='')
+        print("\033[K\n\033[2B",end='')
         return
     response = Message.Message(socket,'create-grp',cmd,box).processTask()
     
     if response == 0:
-        print("Successfully Created Group")
+        print("\033[3A",end='')
+        print("Successfully Created Group",end='')
+        print("\033[K\n\033[2B",end='')
     elif response == 1:
-        print("Group with this id already exists. Couldn't create group.")
+        print("\033[3A",end='')
+        print("Group with this id already exists. Couldn't create group.",end='')
+        print("\033[K\n\033[2B",end='')
 
 def addMemberInGroup(cmd,socket,box):
     """ Function to add member in a group
@@ -127,13 +139,21 @@ def addMemberInGroup(cmd,socket,box):
             }
     response = Message.Message(socket,'add-mem',req,box).processTask()
     if response == 0:
-        print("Successfully Added New Member in Group")
+        print("\033[3A",end='')
+        print("Successfully Added New Member in Group",end='')
+        print("\033[K\n\033[2B",end='')
     elif response == 1:
-        print("There is no group with this name")
+        print("\033[3A",end='')
+        print("There is no group with this name",end='')
+        print("\033[K\n\033[2B",end='')
     elif response == 2:
-        print("You are not authorized to add Members in this group")
+        print("\033[3A",end='')
+        print("You are not authorized to add Members in this group",end='')
+        print("\033[K\n\033[2B",end='')
     elif response == 3:
-        print(f'There is no user with username: {userID}')
+        print("\033[3A",end='')
+        print(f'There is no user with username: {userID}',end='')
+        print("\033[K\n\033[2B",end='')
 
 def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user
