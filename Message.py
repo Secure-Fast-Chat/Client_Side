@@ -337,10 +337,11 @@ class Message:
             senderKey = PublicKey(header["sender_e2e_public_key"], encoder=Base64Encoder)
             msg_content = self._decrypt(msg_content, senderKey)
         else:
-            groupKey = header["groupkey"]
-            groupKey = self._decrypt(groupKey, header['creatorPubkey'])
-            box = SecretBox(groupKey)
-            msg_content = box.decrypt(msg_content)
+            groupCreatorsPubKey = PublicKey(header['creatorPubKey'], encoder=Base64Encoder)
+            box = Box(e2ePrivateKey, groupCreatorsPubKey)
+            groupKey = box.decrypt(header['group-key'], encoder=Base64Encoder) #Send the key after base64 encoding
+            box = nacl.secret.SecretBox(groupKey)
+            msg_content = box.decrypt(msg_content,encoder=Base64Encoder)
         msg = {
                 'content' : msg_content,
                 'content-type' : header['content-type'],
@@ -508,6 +509,7 @@ class Message:
         groupPrivateKey = self._get_group_key(self.request_content['guid'])
         if not groupPrivateKey:
             return 2
+        # print(groupPrivateKey)
         box = nacl.secret.SecretBox(groupPrivateKey)
 
         content = box.encrypt(self.request_content['message-content'], encoder=Base64Encoder)
