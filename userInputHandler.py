@@ -70,15 +70,14 @@ def sendGroupMessage(cmd,content_type,socket,box):
         message = f.read()
         f.close()
     else:
-        global ENCODING_USED
-        message = message.encode(ENCODING_USED)
+        message = message.encode(Message.ENCODING_USED)
 
     request = {
             'message-content' : message ,
             'content-type' : content_type ,
             'guid' : groupName 
             }
-    msg = Message.Message(socket,'send-group-message',req,box)
+    msg = Message.Message(socket,'send-group-message',request,box)
     response = msg.processTask()
     if response == 0:
         return
