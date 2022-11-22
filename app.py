@@ -173,8 +173,6 @@ def handleMessageFromServer(socket,box):
         f = open(filename,'wb')
         f.write(msg['content'])
         f.close()
-        print(type(msg['sender']))
-        print(type(filename))
         to_print = 'You recieved a file from ' + msg['sender'] + '. The address to access file is: ' + os.getcwd() + filename
     else:
         to_print = '[' + msg['sender'] + ' : ' + datetime.now().strftime("%H:%M:%S") + ']: ' + msg['content']
