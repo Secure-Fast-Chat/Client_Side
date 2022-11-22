@@ -1,4 +1,5 @@
 import Message
+import os
 import sys
 import nacl
 import re
@@ -32,7 +33,7 @@ def sendMessage(cmd,content_type,socket,box):
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
         if not os.path.exists(message):
-            print("\033[3A"+f"Couldn't find file : {message}"+"\033[K\n\033[2B",end = '')
+            print("\033[3A"+"Couldn't find file : "+message+"\033[K\n\033[2B",end = '')
             return
         f = open(message,'rb')
         message = f.read()
@@ -51,7 +52,7 @@ def sendMessage(cmd,content_type,socket,box):
     if response == 0:
         return
     if response == 1:
-        print(f"\033[3A"+"No user with userid: {username}"+"\033[K\n\033[2B",end = '')
+        print("\033[3A"+"No user with userid: {username}"+"\033[K\n\033[2B",end = '')
 
 def sendGroupMessage(cmd,content_type,socket,box):
     """ Parse the message to send to everyone in the group
@@ -70,7 +71,7 @@ def sendGroupMessage(cmd,content_type,socket,box):
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
         if not os.path.exists(message):
-            print("\033[3A"+f"Couldn't find file : {message}"+"\033[K\n\033[2B",end = '')
+            print("\033[3A"+"Couldn't find file : "+message+"\033[K\n\033[2B",end = '')
             return
         f = open(message,'rb')
         message = f.read()
@@ -90,7 +91,7 @@ def sendGroupMessage(cmd,content_type,socket,box):
     if response == 1:
         print("\033[3A"+"Couldn't Send"+"\033[K\n\033[2B",end = '')
     if response == 2:
-        print("\033[3A"+f"No group with group name {groupName}"+"\033[K\n\033[2B",end = '')
+        print("\033[3A"+"No group with group name "+groupName+"\033[K\n\033[2B",end = '')
 
 def createGroup(cmd,socket,box):
     """ Create a group with the name cmd
@@ -105,7 +106,7 @@ def createGroup(cmd,socket,box):
 
     is_valid = checkValidityOfUID(cmd)
     if not is_valid:
-        print("\033[3A"+,end = '')
+        print("\033[3A",end = '')
         print("Invalid UID for group. Please use only alphabets, numbers or _ in the group name",end='')
         print("\033[K\n\033[2B",end='')
         return

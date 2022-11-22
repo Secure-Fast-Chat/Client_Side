@@ -173,7 +173,7 @@ def handleMessageFromServer(socket,box):
     else:
         to_print = '[' + msg['sender'] + ' : ' + datetime.now().strftime("%H:%M:%S") + ']: ' + msg['content']
 
-    f = open(os.path.join(os.path.expanduser('~'),'/SecureFastChatMessages.txt'),'a')
+    f = open(os.path.join(os.path.expanduser('~'),'SecureFastChatMessages.txt'),'a')
     f.write(to_print+'\n')
 
     print('\033[s\033[3B'+to_print.strip() + '\033[K\033[u',end = '')
