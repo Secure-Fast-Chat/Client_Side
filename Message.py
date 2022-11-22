@@ -465,6 +465,26 @@ class Message:
             return key
         return None
 
+    def _remove_member_from_group(self):
+        """ Function to add Member in a group. Will be accepted by the server only if I am the owner of the group
+
+        :return: Exit status to tell the status
+        :rtype: int
+        """
+
+        
+        header = {
+                'request' : 'remove-mem',
+                'guid' : self.request_content['guid'],
+                'uid' : self.request_content['uid'],
+                }
+        hdr = self._json_encode(header)
+        hdr = self._encrypt_server(hdr)
+        self._data_to_send = struct.pack('>H',len(hdr)) + hdr
+        self._send_data_to_server()
+        self._recv_data_from_server(2, False) # 0 for success and 2 if not admin
+        return struct.unpack('>H',self._recvd_msg)[0]
+
     def _add_member_in_group(self):
         """ Function to add Member in a group. Will be accepted by the server only if I am the owner of the group
 
@@ -525,6 +545,7 @@ class Message:
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
+
     def processTask(self):
         """ Processes the task to do
 
@@ -549,3 +570,5 @@ class Message:
             return self._add_member_in_group()
         if self.task == 'send-group-message':
             return self._send_message_in_group()
+        if self.task == 'remove-mem':
+            return self._remove_member_from_group()

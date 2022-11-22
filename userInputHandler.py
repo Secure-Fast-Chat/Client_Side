@@ -178,11 +178,11 @@ def removeMemberFromGroup(cmd,socket,box):
             'guid' : grpName, 'uid' : userID }
     response = Message.Message(socket,'remove-mem',req,box).processTask()
     if response == 0:
-        log += "Successfully Added New Member in Group"
+        log += "Successfully Removed From the Group"
     elif response == 1:
         log += "There is no group with the name: " + grpName
     elif response == 2:
-        log += "You are not authorized to add Members in this group"
+        log += "You are not authorized to remove Members in this group"
     elif response == 3:
         log += 'There is no user with username: ' + userID
     updateLogs(log)
