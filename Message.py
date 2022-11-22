@@ -279,6 +279,8 @@ class Message:
         len_header = struct.unpack('>H',self._recvd_msg)[0]
         self._recv_data_from_server(len_header)
         header = self._json_decode(self._recvd_msg, ENCODING_USED)
+        if ("availability" not in header.keys()):
+            return 2
         if header['availability'] == 0:
             return 0
         else:

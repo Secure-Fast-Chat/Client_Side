@@ -101,6 +101,9 @@ def login(sock, box):
     elif response == 2:
         print("Invalid Password. Please Try Again.")
         return -1
+    elif response == 3:
+        print("Uid type is not correct, uid can have only alphabets and underscore")
+        return -1
     ##############################################################################################
     else:
         print(response)
@@ -126,6 +129,9 @@ def signup(sock, box):
 
     if response == 0:
         print("This username is already taken. Sorry! Please try again with a different username")
+        return -1
+    elif response == 2:
+        print("This username type is invalid, please use only alphabets and underscore")
         return -1
     
     print("The username you requested for is available")
