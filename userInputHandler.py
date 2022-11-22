@@ -161,6 +161,32 @@ def addMemberInGroup(cmd,socket,box):
         log += 'There is no user with username: ' + userID
     updateLogs(log)
 
+def removeMemberFromGroup(cmd,socket,box):
+    """ Function to add member in a group
+
+    :param cmd: The part of command containing group name and member userid
+    :type cmd: str
+    :param socket: Socket with active authorized connection to server
+    :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
+    """
+
+    grpName = cmd.split(' ')[0]
+    userID = cmd.split(' ')[1]
+    req = {
+            'guid' : grpName, 'uid' : userID }
+    response = Message.Message(socket,'remove-mem',req,box).processTask()
+    if response == 0:
+        log += "Successfully Added New Member in Group"
+    elif response == 1:
+        log += "There is no group with the name: " + grpName
+    elif response == 2:
+        log += "You are not authorized to add Members in this group"
+    elif response == 3:
+        log += 'There is no user with username: ' + userID
+    updateLogs(log)
+
 def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user
 
@@ -183,5 +209,13 @@ def handleUserInput(socket,box):
         createGroup(userInput[7:],socket,box)
     elif '\\addmem ' == userInput[:8]:
         addMemberInGroup(userInput[8:],socket,box)
+    elif '\\rmmem ' == userInput[:7]:
+        removeMemberFromGroup(userInput[7:],socket,box)
+    elif '\\logout' == userInput:
+        socket.close()
+        log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+        log += "User Logged Out"
+        updateLogs(log)
+        exit()
     print("\033[1A\033[K",end = '')
     sys.stdout.flush()
