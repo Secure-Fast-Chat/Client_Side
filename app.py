@@ -22,7 +22,7 @@ start_up_banner = """
 """
 
 host = "127.0.0.1"
-port = 8000
+port = 8080
 
 
 ENCODING_USED = "utf-8" 
@@ -36,6 +36,24 @@ serverkey = None # This is the public key of server to encrypt content to send t
 privatekey = None # This is the private key of client for recieving content from server
 user_public_key = None # Public Key of user to encrypt messages being sent by other users
 
+def getAddressToConnect():
+    """ Function to get server conn info from loadbalancer
+
+    :return: (host,port) tuple
+    :rtype: tuple(str,int)
+    """
+
+    print("Connecting to Loadbalancer")
+    sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
+    try:
+        sock.connect((host,port))
+    except connectionrefusederror:
+        print(f"\nunable to connect to loadbalancer on {host}:{port}")
+        exit()
+    server_address = Message.Message(sock,'get-server','',None).processTask()
+    print(server_address)
+    return server_address
+
 def connectToServer():
     """ Function to connect to server and exchange keys for encrypted connection
 
@@ -43,12 +61,13 @@ def connectToServer():
     :rtype: socket.socket,nacl.public.Box
     """
 
+    server_host,server_port = getAddressToConnect()
     print("Connecting to server")
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
-        sock.connect((host,port))
-    except ConnectionRefusedError:
-        print(f"\nUnable to Connect to server on {host}:{port}")
+        sock.connect((server_host,server_port))
+    except connectionrefusederror:
+        print(f"\nunable to connect to server on {host}:{port}")
         exit()
     # Receive the public key of the server
     # First the server sends their key, then we send ours

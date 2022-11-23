@@ -71,6 +71,7 @@ class Message:
             encrypted=False # Since the nonce itself must be atleast 24 bits long, this should never happen
         self._recvd_msg = b''
         while len(self._recvd_msg) < size:
+            print(self._recvd_msg)
             self._recvd_msg += self.socket.recv(size-len(self._recvd_msg))
         if encrypted:
             self._recvd_msg = self.box.decrypt(self._recvd_msg)
@@ -525,6 +526,14 @@ class Message:
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
 
+    def _get_server_from_lb(self):
+        self._recv_data_from_server(2,encrypted=False)
+        header_len = struct.unpack(">H",self._recvd_msg)
+        self._recv_data_from_server(header_len,encrypted = False)
+        header = self._json_decode(self._recvd_msg)
+        return (header['host'],header['port'])
+
+
     def processTask(self):
         """ Processes the task to do
 
@@ -549,3 +558,5 @@ class Message:
             return self._add_member_in_group()
         if self.task == 'send-group-message':
             return self._send_message_in_group()
+        if self.task == 'get-server':
+            return self._get_server_from_lb()
