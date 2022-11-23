@@ -151,6 +151,7 @@ def addMemberInGroup(cmd,socket,box):
             'new-uid' : userID
             }
     response = Message.Message(socket,'add-mem',req,box).processTask()
+    log = ""
     if response == 0:
         log += "Successfully Added New Member in Group"
     elif response == 1:

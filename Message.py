@@ -466,7 +466,7 @@ class Message:
         return None
 
     def _remove_member_from_group(self):
-        """ Function to add Member in a group. Will be accepted by the server only if I am the owner of the group
+        """ Function to remove Member in a group. Will be accepted by the server only if I am the owner of the group
 
         :return: Exit status to tell the status
         :rtype: int
@@ -477,6 +477,7 @@ class Message:
                 'request' : 'remove-mem',
                 'guid' : self.request_content['guid'],
                 'uid' : self.request_content['uid'],
+                'content-length': 0,
                 }
         hdr = self._json_encode(header)
         hdr = self._encrypt_server(hdr)
@@ -508,7 +509,8 @@ class Message:
                 'request' : 'add-mem',
                 'guid' : self.request_content['guid'],
                 'new-uid' : self.request_content['new-uid'],
-                'user-grp-key' : newUserGroupKey
+                'user-grp-key' : newUserGroupKey,
+                'content-length': 0,
                 }
         hdr = self._json_encode(header)
         hdr = self._encrypt_server(hdr)
