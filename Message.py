@@ -309,6 +309,7 @@ class Message:
             "request" : 'keyex',
             "key": publickey,
             "content-encoding" : ENCODING_USED,
+            "content-len": 0,
             
         }
         encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)

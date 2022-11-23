@@ -68,7 +68,7 @@ def connectToServer():
     try:
         sock.connect((server_host,server_port))
     except ConnectionRefusedError:
-        print(f"\nunable to connect to server on {host}:{port}")
+        print(f"\nunable to connect to server on {server_host}:{server_port}")
         exit()
     # Receive the public key of the server
     # First the server sends their key, then we send ours
@@ -78,6 +78,9 @@ def connectToServer():
     message = Message.Message(sock,'keyex',{'key' : myPublicKey.encode(Base64Encoder).decode()}, box=None) 
     message.processTask()
     data = sock.recv(2)
+    if data == b'':
+        print("Error occurred while connecting")
+        exit() 
     
     len_header = struct.unpack('>H',data)[0]
     data = sock.recv(len_header)
