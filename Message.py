@@ -71,7 +71,6 @@ class Message:
             encrypted=False # Since the nonce itself must be atleast 24 bits long, this should never happen
         self._recvd_msg = b''
         while len(self._recvd_msg) < size:
-            print(self._recvd_msg)
             self._recvd_msg += self.socket.recv(size-len(self._recvd_msg))
         if encrypted:
             self._recvd_msg = self.box.decrypt(self._recvd_msg)
@@ -528,7 +527,7 @@ class Message:
 
     def _get_server_from_lb(self):
         self._recv_data_from_server(2,encrypted=False)
-        header_len = struct.unpack(">H",self._recvd_msg)
+        header_len = struct.unpack(">H",self._recvd_msg)[0]
         self._recv_data_from_server(header_len,encrypted = False)
         header = self._json_decode(self._recvd_msg)
         return (header['host'],header['port'])
