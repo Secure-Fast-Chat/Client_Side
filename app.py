@@ -22,7 +22,7 @@ start_up_banner = """
 """
 
 host = "127.0.0.1"
-port = 8080
+port = 8000
 
 
 ENCODING_USED = "utf-8" 
@@ -47,7 +47,8 @@ def getAddressToConnect():
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
         sock.connect((host,port))
-    except connectionrefusederror:
+    # except connectionrefusederror:
+    except ConnectionRefusedError:
         print(f"\nunable to connect to loadbalancer on {host}:{port}")
         exit()
     server_address = Message.Message(sock,'get-server','',None).processTask()
@@ -66,7 +67,7 @@ def connectToServer():
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
     try:
         sock.connect((server_host,server_port))
-    except connectionrefusederror:
+    except ConnectionRefusedError:
         print(f"\nunable to connect to server on {host}:{port}")
         exit()
     # Receive the public key of the server
