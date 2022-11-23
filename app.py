@@ -169,7 +169,7 @@ def handleMessageFromServer(socket,box):
     msg = Message.Message(socket,'recv_msg','',box).processTask()
     to_print = ''
     if(msg['content-type'] == 'file'):
-        filename = 'SecureFastChat_'+msg['sender'] + msg['timestamp'].strftime("%D/%M/%Y - %H:%M:%S")
+        filename = 'SecureFastChat_'+msg['sender'] + msg['timestamp'].strftime("%d_%m_%Y-%H:%M:%S") # Filename should not have backslashes
         f = open(filename,'wb')
         f.write(msg['content'])
         f.close()
