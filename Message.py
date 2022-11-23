@@ -494,11 +494,9 @@ class Message:
         """
 
         groupKey = self._get_group_key(self.request_content['guid'])
-        print(groupKey)
         if not groupKey:
             return 1
         userPublicKey = self._get_user_public_key(self.request_content['new-uid'])
-        print(userPublicKey)
         if not userPublicKey:
             return 3
 

@@ -144,6 +144,7 @@ def addMemberInGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
     grpName = cmd.split(' ')[0]
     userID = cmd.split(' ')[1]
     req = {
@@ -151,7 +152,6 @@ def addMemberInGroup(cmd,socket,box):
             'new-uid' : userID
             }
     response = Message.Message(socket,'add-mem',req,box).processTask()
-    log = ""
     if response == 0:
         log += "Successfully Added New Member in Group"
     elif response == 1:
@@ -173,6 +173,7 @@ def removeMemberFromGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
     grpName = cmd.split(' ')[0]
     userID = cmd.split(' ')[1]
     req = {
@@ -217,6 +218,11 @@ def handleUserInput(socket,box):
         log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
         log += "User Logged Out"
         updateLogs(log)
+        print("\n\n")
         exit()
+    else:
+        log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+        log += "Invalid Command"
+        updateLogs(log)
     print("\033[1A\033[K",end = '')
     sys.stdout.flush()
