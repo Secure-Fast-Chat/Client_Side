@@ -575,3 +575,6 @@ class Message:
             return self._add_member_in_group()
         if self.task == 'send-group-message':
             return self._send_message_in_group()
+        if self.task == 'get-server':
+            return self._get_server_from_lb()
+        print(f"Unknown request {self.task}")
