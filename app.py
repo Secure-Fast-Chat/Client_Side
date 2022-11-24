@@ -95,7 +95,8 @@ def connectToServer():
     box = Box(privatekey, serverkey)
     
     return sock, box
-
+der getpasswd(prompt=""):
+    input(prompt)
 def login(sock, box):
     """Function to help user log in to the app
 
@@ -108,7 +109,7 @@ def login(sock, box):
     """
 
     uid = input("Enter Username: ")
-    passwd = getpass.getpass(prompt = "Enter Password: ")
+    passwd = getpasswd(prompt = "Enter Password: ")
     
 
     # Use message class for sending request
@@ -158,12 +159,12 @@ def signup(sock, box):
         return -1
     
     print("The username you requested for is available")
-    password1 = getpass.getpass(prompt = "Enter Password: ")
-    password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+    password1 = getpasswd(prompt = "Enter Password: ")
+    password2 = getpasswd(prompt = "Re-Enter Password: ")
     while password1 != password2:
         print("Passwords didn't match. Try Again!")
-        password1 = getpass.getpass(prompt = "Enter Password: ")
-        password2 = getpass.getpass(prompt = "Re-Enter Password: ")
+        password1 = getpasswd(prompt = "Enter Password: ")
+        password2 = getpasswd(prompt = "Re-Enter Password: ")
 
     Message.e2ePrivateKey = PrivateKey(hashlib.sha256((username+password1).encode("utf-8")).digest()) 
     message = Message.Message(sock,'signuppass',{'password' :password1, "e2eKey":Message.e2ePrivateKey.public_key.encode(Base64Encoder).decode()}, box)
