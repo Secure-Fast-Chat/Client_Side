@@ -162,6 +162,25 @@ def addMemberInGroup(cmd,socket,box):
         log += 'There is no user with username: ' + userID
     updateLogs(log)
 
+def leaveGroup(cmd,socket,box):
+    """ Function to leave a group
+
+    :param cmd: The part of command containing group name
+    :type cmd: str
+    :param socket: Socket with active authorized connection to server
+    :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
+    """
+
+    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    response = Message.Message(socket,'leave-grp',cmd,box).processTask()
+    if response == 0:
+        log += "Group Successfully Removed"
+    elif response == 1:
+        log += "There is no group with this name"
+    updateLogs(log)
+
 def removeMemberFromGroup(cmd,socket,box):
     """ Function to add member in a group
 
@@ -213,6 +232,8 @@ def handleUserInput(socket,box):
         addMemberInGroup(userInput[8:],socket,box)
     elif '\\rmmem ' == userInput[:7]:
         removeMemberFromGroup(userInput[7:],socket,box)
+    elif '\\rmgrp ' == userInput[:7]:
+        leaveGroup(userInput[7:],socket,box)
     elif '\\logout' == userInput:
         socket.close()
         log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")

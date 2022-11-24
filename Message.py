@@ -545,6 +545,7 @@ class Message:
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
+    
     def _get_server_from_lb(self):
         self._recv_data_from_server(2,encrypted=False)
         header_len = struct.unpack(">H",self._recvd_msg)[0]
@@ -552,6 +553,45 @@ class Message:
         header = self._json_decode(self._recvd_msg)
         return (header['host'],header['port'])
         
+    def _leave_grp(self):
+        """ This function is used to send request to leave a group
+
+        :return: Exit status, 0 for success
+        :rtype: int
+        """
+
+        json_header={
+                'request' : 'leave-grp',
+                'guid' : self.request_content
+                }
+        self._prepare_request_to_send(json_header,encrypt_content = False)
+        self._send_data_to_server()
+        self._recv_data_from_server(2,encrypted = False)
+        return struct.unpack(">H",self._recvd_msg)[0]
+
+    def _prepare_request_to_send(self,json_header,content = b'',encrypt_content = True,encrypt_header = True):
+        """ Function to prepare message of form protoheader + header + content and puts it in _data_to_send
+
+        :param json_header: header with uncommon keys (Common keys include content-length,byteorder)
+        :type json_header: dict
+        :param content: Content of the request
+        :type content: bytes
+        :param encrypt_content: Is content to be encrypted for server to client interaction
+        :type encrypt_content: bool
+        :param encrypt_header: Is header to be encrypted for server to client interaction
+        :type encrypt_header: bool
+        """
+
+        if(encrypt_content):
+            content = self._encrypt_server(content)
+        json_header['byteorder'] = sys.byteorder
+        json_header['content-length'] = len(content)
+        encoded_json_header = self._json_encode(json_header)
+        if encrypt_header:
+            encoded_json_header = self._encrypt_server(encoded_json_header)
+        protoheader = struct.pack(">H",len(encoded_json_header))
+        self._data_to_send = protoheader + encoded_json_header + content
+
     def processTask(self):
         """ Processes the task to do
 
@@ -578,4 +618,6 @@ class Message:
             return self._send_message_in_group()
         if self.task == 'get-server':
             return self._get_server_from_lb()
+        if self.task == 'leave-grp':
+            return self._leave_grp()
         print(f"Unknown request {self.task}")
