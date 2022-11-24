@@ -397,7 +397,7 @@ class Message:
             return 1
         #send the message
         msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
-        msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
+        # msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
         header = {
                 'byteorder' : sys.byteorder,
                 'request' : 'send-msg',
