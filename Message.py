@@ -547,6 +547,11 @@ class Message:
         return struct.unpack('>H',self._recvd_msg)[0]
 
     def _get_server_from_lb(self):
+        """ This function reads address of server as sent by load balancer
+
+        :return: Server to connect to
+        :rtype: tuple(host,port)
+        """
         self._recv_data_from_server(2,encrypted=False)
         header_len = struct.unpack(">H",self._recvd_msg)[0]
         self._recv_data_from_server(header_len,encrypted = False)

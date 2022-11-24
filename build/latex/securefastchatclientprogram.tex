@@ -4,11 +4,6 @@
 \ifdefined\pdfpxdimen
    \let\sphinxpxdimen\pdfpxdimen\else\newdimen\sphinxpxdimen
 \fi \sphinxpxdimen=.75bp\relax
-\ifdefined\pdfimageresolution
-    \pdfimageresolution= \numexpr \dimexpr1in\relax/\sphinxpxdimen\relax
-\fi
-%% let collapsible pdf bookmarks panel have high depth per default
-\PassOptionsToPackage{bookmarksdepth=5}{hyperref}
 
 \PassOptionsToPackage{warn}{textcomp}
 \usepackage[utf8]{inputenc}
@@ -33,16 +28,34 @@
 
 
 
-\usepackage{tgtermes}
-\usepackage{tgheros}
-\renewcommand{\ttdefault}{txtt}
-
+\usepackage{times}
+\expandafter\ifx\csname T@LGR\endcsname\relax
+\else
+% LGR was declared as font encoding
+  \substitutefont{LGR}{\rmdefault}{cmr}
+  \substitutefont{LGR}{\sfdefault}{cmss}
+  \substitutefont{LGR}{\ttdefault}{cmtt}
+\fi
+\expandafter\ifx\csname T@X2\endcsname\relax
+  \expandafter\ifx\csname T@T2A\endcsname\relax
+  \else
+  % T2A was declared as font encoding
+    \substitutefont{T2A}{\rmdefault}{cmr}
+    \substitutefont{T2A}{\sfdefault}{cmss}
+    \substitutefont{T2A}{\ttdefault}{cmtt}
+  \fi
+\else
+% X2 was declared as font encoding
+  \substitutefont{X2}{\rmdefault}{cmr}
+  \substitutefont{X2}{\sfdefault}{cmss}
+  \substitutefont{X2}{\ttdefault}{cmtt}
+\fi
 
 
 \usepackage[Bjarne]{fncychap}
 \usepackage{sphinx}
 
-\fvset{fontsize=auto}
+\fvset{fontsize=\small}
 \usepackage{geometry}
 
 
@@ -61,18 +74,13 @@
 
 
 \title{Secure Fast Chat: Client Program}
-\date{Nov 21, 2022}
+\date{Nov 24, 2022}
 \release{}
 \author{Khushang Singla	Mridul Agarwal	Arhaan Ahmad}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{}
 \makeindex
 \begin{document}
-
-\ifdefined\shorthandoff
-  \ifnum\catcode`\=\string=\active\shorthandoff{=}\fi
-  \ifnum\catcode`\"=\active\shorthandoff{"}\fi
-\fi
 
 \pagestyle{empty}
 \sphinxmaketitle
@@ -82,75 +90,55 @@
 \phantomsection\label{\detokenize{index::doc}}
 
 
-\sphinxstepscope
-
 
 \chapter{Client\_Side}
 \label{\detokenize{modules:client-side}}\label{\detokenize{modules::doc}}
-\sphinxstepscope
-
 
 \section{Message module}
 \label{\detokenize{Message:module-Message}}\label{\detokenize{Message:message-module}}\label{\detokenize{Message::doc}}\index{module@\spxentry{module}!Message@\spxentry{Message}}\index{Message@\spxentry{Message}!module@\spxentry{module}}\index{Message (class in Message)@\spxentry{Message}\spxextra{class in Message}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{class\DUrole{w}{  }}}\sphinxcode{\sphinxupquote{Message.}}\sphinxbfcode{\sphinxupquote{Message}}}{\emph{\DUrole{n}{conn\_socket}}, \emph{\DUrole{n}{task}}, \emph{\DUrole{n}{request}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{class }}\sphinxcode{\sphinxupquote{Message.}}\sphinxbfcode{\sphinxupquote{Message}}}{\emph{\DUrole{n}{conn\_socket}}, \emph{\DUrole{n}{task}}, \emph{\DUrole{n}{request}}, \emph{\DUrole{n}{box}}}{}
 Bases: \sphinxcode{\sphinxupquote{object}}
 
-\sphinxAtStartPar
 This is the class to handle Encryption of messages. The format in which the message is sent to server is determined in this class
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{task}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Task to be done. It can have the values signup, login, send\_message
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} The socket used for connection with Server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{request\_content}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} Content to include in the request to send to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{\_data\_to\_send}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Contains the data to send to the server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{\_recvd\_msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Content recieved from server is stored here
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
 
 \end{description}\end{quote}
 
-\sphinxAtStartPar
 Constructor Object
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{conn\_socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket which has a connection with server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{task}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Task to do. It can have values: login, signup, send\_message
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{request}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Content to send to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -159,11 +147,7 @@ Constructor Object
 \index{\_send\_data\_to\_server() (Message.Message method)@\spxentry{\_send\_data\_to\_server()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._send_data_to_server}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_send\_data\_to\_server}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._send_data_to_server}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_send\_data\_to\_server}}}{}{}
 Function to send the string to the server. It sends content of \_send\_data\_to\_server to the server
 
 \end{fulllineitems}
@@ -171,20 +155,14 @@ Function to send the string to the server. It sends content of \_send\_data\_to\
 \index{\_recv\_data\_from\_server() (Message.Message method)@\spxentry{\_recv\_data\_from\_server()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._recv_data_from_server}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recv\_data\_from\_server}}}{\emph{\DUrole{n}{size}}, \emph{\DUrole{n}{encrypted}\DUrole{o}{=}\DUrole{default_value}{True}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._recv_data_from_server}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recv\_data\_from\_server}}}{\emph{\DUrole{n}{size}}, \emph{\DUrole{n}{encrypted}\DUrole{o}{=}\DUrole{default_value}{True}}}{}
 Function to recv data from server. Stores the bytes recieved in a variable named \_recvd\_msg.
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{size}} (\sphinxstyleliteralemphasis{\sphinxupquote{int}}) \textendash{} Length of content to recieve from server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{encrypted}} (\sphinxstyleliteralemphasis{\sphinxupquote{bool}}) \textendash{} (optional, True) Is the information being recieved encrypted
 
 \end{itemize}
@@ -196,30 +174,22 @@ Function to recv data from server. Stores the bytes recieved in a variable named
 \index{\_json\_encode() (Message.Message method)@\spxentry{\_json\_encode()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._json_encode}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_json\_encode}}}{\emph{\DUrole{n}{obj}}, \emph{\DUrole{n}{encoding}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}utf\sphinxhyphen{}8\textquotesingle{}}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._json_encode}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_json\_encode}}}{\emph{\DUrole{n}{obj}}, \emph{\DUrole{n}{encoding}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}utf\sphinxhyphen{}8\textquotesingle{}}}}{}
 Function to encode dictionary to bytes object
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{obj}} (\sphinxstyleliteralemphasis{\sphinxupquote{dict}}) \textendash{} dictionary to encode
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{encoding}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Encoding to use
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Encoded obj
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -229,30 +199,22 @@ bytes
 \index{\_json\_decode() (Message.Message method)@\spxentry{\_json\_decode()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._json_decode}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_json\_decode}}}{\emph{\DUrole{n}{obj}}, \emph{\DUrole{n}{encoding}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}utf\sphinxhyphen{}8\textquotesingle{}}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._json_decode}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_json\_decode}}}{\emph{\DUrole{n}{obj}}, \emph{\DUrole{n}{encoding}\DUrole{o}{=}\DUrole{default_value}{\textquotesingle{}utf\sphinxhyphen{}8\textquotesingle{}}}}{}
 Function to decode bytes object to dictionary
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{obj}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Encoded json data
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{encoding}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Encoding used
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Decoded json object
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 json
 
 \end{description}\end{quote}
@@ -262,23 +224,16 @@ json
 \index{\_encrypt\_server() (Message.Message method)@\spxentry{\_encrypt\_server()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._encrypt_server}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encrypt\_server}}}{\emph{\DUrole{n}{data}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._encrypt_server}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encrypt\_server}}}{\emph{\DUrole{n}{data}}}{}
 Encrypts the data
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}
-\sphinxAtStartPar
+\item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{data}} (\sphinxstyleliteralemphasis{\sphinxupquote{Any}}) \textendash{} the data to encrypt
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Encrypted data
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -288,23 +243,16 @@ bytes
 \index{\_hash\_password() (Message.Message method)@\spxentry{\_hash\_password()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._hash_password}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_hash\_password}}}{\emph{\DUrole{n}{passwd}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._hash_password}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_hash\_password}}}{\emph{\DUrole{n}{passwd}}}{}
 Function to salt and hash the password before sending to server
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}
-\sphinxAtStartPar
+\item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{passwd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Password to be hashed
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Transformed Password
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 str
 
 \end{description}\end{quote}
@@ -314,30 +262,22 @@ str
 \index{\_encryptE2E() (Message.Message method)@\spxentry{\_encryptE2E()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._encryptE2E}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encryptE2E}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{receiverPubkey}\DUrole{p}{:}\DUrole{w}{  }\DUrole{n}{PublicKey}}}{{ $\rightarrow$ bytes}}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._encryptE2E}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_encryptE2E}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{receiverPubkey}\DUrole{p}{:} \DUrole{n}{nacl.public.PublicKey}}}{{ $\rightarrow$ bytes}}
 Encrypt the message to send to reciever
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Message to encrypt
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{receiverPubkey}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.PublicKey}}) \textendash{} Public Key of the other user
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Message encrypted using receiver key
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -347,30 +287,22 @@ bytes
 \index{\_decrypt() (Message.Message method)@\spxentry{\_decrypt()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._decrypt}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_decrypt}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{senderPubKey}\DUrole{p}{:}\DUrole{w}{  }\DUrole{n}{PublicKey}}}{{ $\rightarrow$ bytes}}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._decrypt}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_decrypt}}}{\emph{\DUrole{n}{msg}}, \emph{\DUrole{n}{senderPubKey}\DUrole{p}{:} \DUrole{n}{nacl.public.PublicKey}}}{{ $\rightarrow$ bytes}}
 Function to decrypt the content accessible to users only
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{msg}} (\sphinxstyleliteralemphasis{\sphinxupquote{bytes}}) \textendash{} Content to decrypt
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{key}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Key to use for decryption
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Decrypted Message
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -380,20 +312,14 @@ bytes
 \index{\_create\_login\_request() (Message.Message method)@\spxentry{\_create\_login\_request()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_login_request}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_login\_request}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._create_login_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_login\_request}}}{}{}
 The jsonheader has the following keys: |
 byteorder, request, content\sphinxhyphen{}encoding, username, password. The value for request is ‘login’ |
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Message to send to server directly for login
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -403,21 +329,15 @@ bytes
 \index{\_create\_signuppass\_request() (Message.Message method)@\spxentry{\_create\_signuppass\_request()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_signuppass_request}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signuppass\_request}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._create_signuppass_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signuppass\_request}}}{}{}
 The jsonheader has the following keys: |
 byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘signuppass’ |
 The content has encoded password and e2e public Key
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Message to send to server directly for login
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -427,21 +347,15 @@ bytes
 \index{\_create\_signupuid\_request() (Message.Message method)@\spxentry{\_create\_signupuid\_request()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_signupuid_request}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signupuid\_request}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._create_signupuid_request}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_signupuid\_request}}}{}{}
 The jsonheader has the following keys: |
 byteorder, request, content\sphinxhyphen{}length, content\sphinxhyphen{}encoding. The value for request is ‘signupuid’ |
 The content has user id.
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Message to send to server directly for signup request
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bytes
 
 \end{description}\end{quote}
@@ -451,20 +365,14 @@ bytes
 \index{\_login() (Message.Message method)@\spxentry{\_login()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._login}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_login}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._login}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_login}}}{}{}
 Function to help login into the system. This function sends the login details to the server |
 The function expects to recieve a response of size 2 from server which gives 0 if success and 1 if wrong uid and 2 for wrong passwd
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Response from server converted to int
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -474,20 +382,14 @@ int
 \index{\_signuppass() (Message.Message method)@\spxentry{\_signuppass()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._signuppass}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signuppass}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._signuppass}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signuppass}}}{}{}
 Function to save account password at server
 The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 for success
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Response from server converted to int
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -497,20 +399,14 @@ int
 \index{\_signupuid() (Message.Message method)@\spxentry{\_signupuid()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._signupuid}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signupuid}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._signupuid}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_signupuid}}}{}{}
 Function to help signup to make new account. This function sends the new user userid to the server |
 The function expects to recieve a response of size 2 from server which gives 0 if username already taken and 1 if username is available
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Response from server converted to int
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -520,19 +416,13 @@ int
 \index{\_create\_group\_key() (Message.Message method)@\spxentry{\_create\_group\_key()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_group_key}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_group\_key}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._create_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_group\_key}}}{}{}
 Function to get the Private key of group to use it to encrypt the messages being sent in groups
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 private key
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 str
 
 \end{description}\end{quote}
@@ -542,11 +432,7 @@ str
 \index{\_keyex() (Message.Message method)@\spxentry{\_keyex()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._keyex}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_keyex}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._keyex}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_keyex}}}{}{}
 Send public key to server for encryption of server\sphinxhyphen{}\textgreater{}client interaction
 
 \end{fulllineitems}
@@ -554,19 +440,13 @@ Send public key to server for encryption of server\sphinxhyphen{}\textgreater{}c
 \index{\_recvmsg() (Message.Message method)@\spxentry{\_recvmsg()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._recvmsg}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recvmsg}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._recvmsg}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_recvmsg}}}{}{}
 Recieves the information from server. It interprets this as a message from some user and returns the message recieved. The header of recieved request should at least have ‘content’,’content\sphinxhyphen{}type’,’sender’,’content\sphinxhyphen{}length’,’byteorder’,’sender\_e2e\_public\_key’ as the keys
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 The dictionary containing details of message.
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 dict
 
 \end{description}\end{quote}
@@ -576,23 +456,16 @@ dict
 \index{\_get\_user\_public\_key() (Message.Message method)@\spxentry{\_get\_user\_public\_key()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._get_user_public_key}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_user\_public\_key}}}{\emph{\DUrole{n}{uid}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._get_user_public_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_user\_public\_key}}}{\emph{\DUrole{n}{uid}}}{}
 Function to get public key of a user
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}
-\sphinxAtStartPar
+\item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{uid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} uid of user
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 key of user if found, None otherwise
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 nacl.public.PublicKey
 
 \end{description}\end{quote}
@@ -602,19 +475,13 @@ nacl.public.PublicKey
 \index{\_sendmsg() (Message.Message method)@\spxentry{\_sendmsg()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._sendmsg}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_sendmsg}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._sendmsg}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_sendmsg}}}{}{}
 This function sends the message to the server
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Exit status, 0 for success, 1 if no such uid
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -624,19 +491,13 @@ int
 \index{\_create\_grp() (Message.Message method)@\spxentry{\_create\_grp()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._create_grp}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_grp}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._create_grp}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_create\_grp}}}{}{}
 Function to send a request to create a group
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 exit status. 0 for success, 1 if group name already exists
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -646,24 +507,33 @@ int
 \index{\_get\_group\_key() (Message.Message method)@\spxentry{\_get\_group\_key()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._get_group_key}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_group\_key}}}{\emph{\DUrole{n}{guid}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._get_group_key}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_group\_key}}}{\emph{\DUrole{n}{guid}\DUrole{p}{:} \DUrole{n}{str}}}{}
 Function to get the encrypted group private key from server.
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}
-\sphinxAtStartPar
+\item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{guid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Group Name
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 This function returns key if found, else None if User not in group
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 str or None
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_remove\_member\_from\_group() (Message.Message method)@\spxentry{\_remove\_member\_from\_group()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._remove_member_from_group}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_remove\_member\_from\_group}}}{}{}
+Function to remove Member in a group. Will be accepted by the server only if I am the owner of the group
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Exit status to tell the status
+
+\item[{Return type}] \leavevmode
+int
 
 \end{description}\end{quote}
 
@@ -672,19 +542,13 @@ str or None
 \index{\_add\_member\_in\_group() (Message.Message method)@\spxentry{\_add\_member\_in\_group()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._add_member_in_group}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_add\_member\_in\_group}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
-Function to add Member in a group
+\phantomsection\label{\detokenize{Message:Message.Message._add_member_in_group}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_add\_member\_in\_group}}}{}{}
+Function to add Member in a group. Will be accepted by the server only if I am the owner of the group
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Exit status to tell the status
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -694,20 +558,30 @@ int
 \index{\_send\_message\_in\_group() (Message.Message method)@\spxentry{\_send\_message\_in\_group()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message._send_message_in_group}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_send\_message\_in\_group}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message._send_message_in_group}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_send\_message\_in\_group}}}{}{}
 Function to send message in a group
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 0 for success, 1 for failure, 2 if not in group
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{\_get\_server\_from\_lb() (Message.Message method)@\spxentry{\_get\_server\_from\_lb()}\spxextra{Message.Message method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{Message:Message.Message._get_server_from_lb}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{\_get\_server\_from\_lb}}}{}{}
+This function reads address of server as sent by load balancer
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+Server to connect to
+
+\item[{Return type}] \leavevmode
+tuple(host,port)
 
 \end{description}\end{quote}
 
@@ -716,19 +590,13 @@ int
 \index{processTask() (Message.Message method)@\spxentry{processTask()}\spxextra{Message.Message method}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{Message:Message.Message.processTask}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{processTask}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{Message:Message.Message.processTask}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{processTask}}}{}{}
 Processes the task to do
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Returns int to represent result of the process. The details of return values are given in the corresponding functions handling the actions.
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 int
 
 \end{description}\end{quote}
@@ -739,26 +607,34 @@ int
 \end{fulllineitems}
 
 
-\sphinxstepscope
-
 
 \section{app module}
-\label{\detokenize{app:module-app}}\label{\detokenize{app:app-module}}\label{\detokenize{app::doc}}\index{module@\spxentry{module}!app@\spxentry{app}}\index{app@\spxentry{app}!module@\spxentry{module}}\index{connectToServer() (in module app)@\spxentry{connectToServer()}\spxextra{in module app}}
+\label{\detokenize{app:module-app}}\label{\detokenize{app:app-module}}\label{\detokenize{app::doc}}\index{module@\spxentry{module}!app@\spxentry{app}}\index{app@\spxentry{app}!module@\spxentry{module}}\index{getAddressToConnect() (in module app)@\spxentry{getAddressToConnect()}\spxextra{in module app}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{app:app.connectToServer}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{connectToServer}}}{}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{app:app.getAddressToConnect}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{getAddressToConnect}}}{}{}
+Function to get server conn info from loadbalancer
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+(host,port) tuple
+
+\item[{Return type}] \leavevmode
+tuple(str,int)
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{connectToServer() (in module app)@\spxentry{connectToServer()}\spxextra{in module app}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{app:app.connectToServer}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{connectToServer}}}{}{}
 Function to connect to server and exchange keys for encrypted connection
 \begin{quote}\begin{description}
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Connection Socket and box with keys for decryption and encryption
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 socket.socket,nacl.public.Box
 
 \end{description}\end{quote}
@@ -768,30 +644,22 @@ socket.socket,nacl.public.Box
 \index{login() (in module app)@\spxentry{login()}\spxextra{in module app}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{app:app.login}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{login}}}{\emph{\DUrole{n}{sock}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{app:app.login}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{login}}}{\emph{\DUrole{n}{sock}}, \emph{\DUrole{n}{box}}}{}
 Function to help user log in to the app
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{sock}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket used for connection to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Socket with which user is connected to server
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 socket.socket
 
 \end{description}\end{quote}
@@ -801,30 +669,22 @@ socket.socket
 \index{signup() (in module app)@\spxentry{signup()}\spxextra{in module app}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{app:app.signup}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{signup}}}{\emph{\DUrole{n}{sock}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{app:app.signup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{signup}}}{\emph{\DUrole{n}{sock}}, \emph{\DUrole{n}{box}}}{}
 Function to help user make new account
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{sock}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket used for connection to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Socket with which user is connected to server
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 socket.socket
 
 \end{description}\end{quote}
@@ -834,20 +694,14 @@ socket.socket
 \index{handleMessageFromServer() (in module app)@\spxentry{handleMessageFromServer()}\spxextra{in module app}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{app:app.handleMessageFromServer}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{handleMessageFromServer}}}{\emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{app:app.handleMessageFromServer}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{app.}}\sphinxbfcode{\sphinxupquote{handleMessageFromServer}}}{\emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 This function is called when there is a message from server….
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{sock}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket used for connection to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -857,57 +711,47 @@ This function is called when there is a message from server….
 \end{fulllineitems}
 
 
-\sphinxstepscope
-
 
 \section{userInputHandler module}
 \label{\detokenize{userInputHandler:module-userInputHandler}}\label{\detokenize{userInputHandler:userinputhandler-module}}\label{\detokenize{userInputHandler::doc}}\index{module@\spxentry{module}!userInputHandler@\spxentry{userInputHandler}}\index{userInputHandler@\spxentry{userInputHandler}!module@\spxentry{module}}\index{checkValidityOfUID() (in module userInputHandler)@\spxentry{checkValidityOfUID()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.checkValidityOfUID}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{checkValidityOfUID}}}{\emph{\DUrole{n}{uid}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.checkValidityOfUID}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{checkValidityOfUID}}}{\emph{\DUrole{n}{uid}}}{}
 Function to check if the uid is valid. A valid uid is one which has only a\sphinxhyphen{}z,A\sphinxhyphen{}Z,0\sphinxhyphen{}9,\_ characters
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}
-\sphinxAtStartPar
+\item[{Parameters}] \leavevmode
 \sphinxstyleliteralstrong{\sphinxupquote{uid}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} User id to check for
 
-\sphinxlineitem{Returns}
-\sphinxAtStartPar
+\item[{Returns}] \leavevmode
 Return True if valid
 
-\sphinxlineitem{Return type}
-\sphinxAtStartPar
+\item[{Return type}] \leavevmode
 bool
 
 \end{description}\end{quote}
 
 \end{fulllineitems}
 
+\index{updateLogs() (in module userInputHandler)@\spxentry{updateLogs()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.updateLogs}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{updateLogs}}}{\emph{\DUrole{n}{logs}}}{}
+\end{fulllineitems}
+
 \index{sendMessage() (in module userInputHandler)@\spxentry{sendMessage()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendMessage}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendMessage}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 Parse the messsage to send to the required user
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The cmd written after “send “
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Connection socket
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -919,28 +763,20 @@ Parse the messsage to send to the required user
 \index{sendGroupMessage() (in module userInputHandler)@\spxentry{sendGroupMessage()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendGroupMessage}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendGroupMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.sendGroupMessage}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{sendGroupMessage}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{content\_type}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 Parse the message to send to everyone in the group
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The cmd written after “sendgrp “
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{content\_type}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Type of message content, i.e. file or text. It is ‘file’ or ‘text’
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Connection socket
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -952,24 +788,17 @@ Parse the message to send to everyone in the group
 \index{createGroup() (in module userInputHandler)@\spxentry{createGroup()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.createGroup}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{createGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.createGroup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{createGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 Create a group with the name cmd
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} Group name
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket which is connected to server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -981,24 +810,39 @@ Create a group with the name cmd
 \index{addMemberInGroup() (in module userInputHandler)@\spxentry{addMemberInGroup()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.addMemberInGroup}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{addMemberInGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.addMemberInGroup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{addMemberInGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 Function to add member in a group
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The part of command containing group name and new member userid
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket with active authorized connection to server
 
 \item {} 
-\sphinxAtStartPar
+\sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
+
+\end{itemize}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{removeMemberFromGroup() (in module userInputHandler)@\spxentry{removeMemberFromGroup()}\spxextra{in module userInputHandler}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.removeMemberFromGroup}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{removeMemberFromGroup}}}{\emph{\DUrole{n}{cmd}}, \emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
+Function to add member in a group
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{cmd}} (\sphinxstyleliteralemphasis{\sphinxupquote{str}}) \textendash{} The part of command containing group name and member userid
+
+\item {} 
+\sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket with active authorized connection to server
+
+\item {} 
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -1010,20 +854,14 @@ Function to add member in a group
 \index{handleUserInput() (in module userInputHandler)@\spxentry{handleUserInput()}\spxextra{in module userInputHandler}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{userInputHandler:userInputHandler.handleUserInput}}
-\pysigstartsignatures
-\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{handleUserInput}}}{\emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
-\pysigstopsignatures
-\sphinxAtStartPar
+\phantomsection\label{\detokenize{userInputHandler:userInputHandler.handleUserInput}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{userInputHandler.}}\sphinxbfcode{\sphinxupquote{handleUserInput}}}{\emph{\DUrole{n}{socket}}, \emph{\DUrole{n}{box}}}{}
 This function is called when the user sends some input. This function does the work asked by user
 \begin{quote}\begin{description}
-\sphinxlineitem{Parameters}\begin{itemize}
+\item[{Parameters}] \leavevmode\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{socket}} (\sphinxstyleliteralemphasis{\sphinxupquote{socket.socket}}) \textendash{} Socket for connection with server
 
 \item {} 
-\sphinxAtStartPar
 \sphinxstyleliteralstrong{\sphinxupquote{box}} (\sphinxstyleliteralemphasis{\sphinxupquote{nacl.public.Box}}) \textendash{} Server Public Key and User Private Key
 
 \end{itemize}
@@ -1037,15 +875,12 @@ This function is called when the user sends some input. This function does the w
 \chapter{Indices and tables}
 \label{\detokenize{index:indices-and-tables}}\begin{itemize}
 \item {} 
-\sphinxAtStartPar
 \DUrole{xref,std,std-ref}{genindex}
 
 \item {} 
-\sphinxAtStartPar
 \DUrole{xref,std,std-ref}{modindex}
 
 \item {} 
-\sphinxAtStartPar
 \DUrole{xref,std,std-ref}{search}
 
 \end{itemize}
