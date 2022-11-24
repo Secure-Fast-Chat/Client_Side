@@ -13,6 +13,7 @@ import hashlib
 import struct
 import json
 from nacl.encoding import Base64Encoder
+from userInputHandler import updateLogs
 
 start_up_banner = """
 ***********************************************************************
@@ -25,6 +26,10 @@ host = "127.0.0.1"
 port = 8000
 
 
+def getPassword(prompt):
+    # passwd = getpass.getpass(prompt = prompt)
+    passwd = input(prompt)
+    return passwd
 ENCODING_USED = "utf-8" 
 
 welcome_message = """    1. Login using and existing account
@@ -90,13 +95,12 @@ def connectToServer():
         exit()
     global serverkey
     serverkey = nacl.public.PublicKey(header['key'], encoder=Base64Encoder) 
-    print(f"Keys Exchanged. server public key = {serverkey}")
-    print(f"My public key is {myPublicKey}")
+    print("Keys Exchanged")
+    # print(f"Keys Exchanged. server public key = {serverkey}")
+    # print(f"My public key is {myPublicKey}")
     box = Box(privatekey, serverkey)
     
     return sock, box
-der getpasswd(prompt=""):
-    input(prompt)
 def login(sock, box):
     """Function to help user log in to the app
 
@@ -109,7 +113,7 @@ def login(sock, box):
     """
 
     uid = input("Enter Username: ")
-    passwd = getpasswd(prompt = "Enter Password: ")
+    passwd = getPassword(prompt = "Enter Password: ")
     
 
     # Use message class for sending request
@@ -159,12 +163,12 @@ def signup(sock, box):
         return -1
     
     print("The username you requested for is available")
-    password1 = getpasswd(prompt = "Enter Password: ")
-    password2 = getpasswd(prompt = "Re-Enter Password: ")
+    password1 = getPassword(prompt = "Enter Password: ")
+    password2 = getPassword(prompt = "Re-Enter Password: ")
     while password1 != password2:
         print("Passwords didn't match. Try Again!")
-        password1 = getpasswd(prompt = "Enter Password: ")
-        password2 = getpasswd(prompt = "Re-Enter Password: ")
+        password1 = getPassword(prompt = "Enter Password: ")
+        password2 = getPassword(prompt = "Re-Enter Password: ")
 
     Message.e2ePrivateKey = PrivateKey(hashlib.sha256((username+password1).encode("utf-8")).digest()) 
     message = Message.Message(sock,'signuppass',{'password' :password1, "e2eKey":Message.e2ePrivateKey.public_key.encode(Base64Encoder).decode()}, box)
@@ -189,6 +193,8 @@ def handleMessageFromServer(socket,box):
     :param box: Server Public Key and User Private Key
     :type box: nacl.public.Box
     """
+    #TODO
+    log = str(datetime.timestamp(datetime.now()))+" : " 
 
     msg = Message.Message(socket,'recv_msg','',box).processTask()
     to_print = ''
@@ -200,13 +206,14 @@ def handleMessageFromServer(socket,box):
         to_print = 'You recieved a file from ' + msg['sender'] + '. The address to access file is: ' + os.getcwd() + filename
     else:
         to_print = '[' + msg['sender'] + ' : ' + msg['timestamp'].strftime("%d/%m/%Y - %H:%M:%S") + ']: ' + msg['content']
-
+    
+    to_print = msg['content'] + f'\t{str(datetime.timestamp(datetime.now()))}' # TODO: Only for performance analysis
     f = open(os.path.join(os.path.expanduser('~'),'SecureFastChatMessages.txt'),'a')
     f.write(to_print+'\n')
 
     print('\033[s\033[3B'+to_print.strip() + '\033[K\033[u',end = '')
     sys.stdout.flush()
-
+    updateLogs(log)
 if __name__ == "__main__":
     os.system('clear')
     conn_socket = None

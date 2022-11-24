@@ -40,7 +40,7 @@ def sendMessage(cmd,content_type,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     username = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
@@ -81,7 +81,8 @@ def sendGroupMessage(cmd,content_type,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    # log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " # TODO
     groupName = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     if content_type == 'file':
@@ -121,7 +122,7 @@ def createGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now())) +" : "
     is_valid = checkValidityOfUID(cmd)
     if not is_valid:
         log += "Invalid UID for group. Please use only alphabets, numbers or _ in the group name"
@@ -146,7 +147,7 @@ def addMemberInGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     grpName = cmd.split(' ')[0]
     userID = cmd.split(' ')[1]
     req = {
@@ -175,7 +176,7 @@ def leaveGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     response = Message.Message(socket,'leave-grp',cmd,box).processTask()
     if response == 0:
         log += "Group Successfully Removed"
@@ -194,7 +195,7 @@ def removeMemberFromGroup(cmd,socket,box):
     :type box: nacl.public.Box
     """
 
-    log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     grpName = cmd.split(' ')[0]
     userID = cmd.split(' ')[1]
     req = {
@@ -239,17 +240,17 @@ def handleUserInput(socket,box):
             leaveGroup(userInput[7:],socket,box)
         elif '\\logout' == userInput:
             socket.close()
-            log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+            log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
             log += "User Logged Out"
             updateLogs(log)
             print("\n\n")
             exit()
         else:
-            log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+            log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
             log += "Invalid Command"
             updateLogs(log)
     except(IndexError):
-        log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+        log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
         log += "Invalid Command"
         updateLogs(log)
     print("\033[1A\033[K",end = '')
