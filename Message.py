@@ -545,6 +545,7 @@ class Message:
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
+
     def _get_server_from_lb(self):
         self._recv_data_from_server(2,encrypted=False)
         header_len = struct.unpack(">H",self._recvd_msg)[0]
@@ -576,6 +577,8 @@ class Message:
             return self._add_member_in_group()
         if self.task == 'send-group-message':
             return self._send_message_in_group()
+        if self.task == 'remove-mem':
+            return self._remove_member_from_group()
         if self.task == 'get-server':
             return self._get_server_from_lb()
         print(f"Unknown request {self.task}")

@@ -5,6 +5,8 @@ import sys
 import nacl
 import re
 
+USERNAME = None
+
 def checkValidityOfUID(uid):
     """ Function to check if the uid is valid. A valid uid is one which has only a-z,A-Z,0-9,_ characters
 
@@ -23,7 +25,7 @@ def updateLogs(logs):
     print("\033[3A",end='')
     print(logs,end='')
     print("\033[K\n\033[2B",end='')
-    f = open("SecureFastChatlogs.txt",'a')
+    f = open(f'SecureFastChatlogs_{USERNAME}.txt','a')
     f.write(logs+'\n')
     f.close()
 
