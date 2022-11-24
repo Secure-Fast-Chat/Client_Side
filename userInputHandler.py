@@ -5,6 +5,8 @@ import sys
 import nacl
 import re
 
+USERNAME = None
+
 def checkValidityOfUID(uid):
     """ Function to check if the uid is valid. A valid uid is one which has only a-z,A-Z,0-9,_ characters
 
@@ -23,7 +25,7 @@ def updateLogs(logs):
     print("\033[3A",end='')
     print(logs,end='')
     print("\033[K\n\033[2B",end='')
-    f = open("SecureFastChatlogs.txt",'a')
+    f = open(f"SecureFastChatlogs_{USERNAME}.txt",'a')
     f.write(logs+'\n')
     f.close()
 
@@ -218,30 +220,35 @@ def handleUserInput(socket,box):
     """
 
     userInput = input()
-    if '\\send ' == userInput[:6]:
-        sendMessage(userInput[6:],'text',socket,box)
-    elif '\\sendfile ' == userInput[:10]:
-        sendMessage(userInput[10:],'file',socket,box)
-    elif '\\sendgrp ' == userInput[:9]:
-        sendGroupMessage(userInput[9:],'text',socket,box)
-    elif '\\sendfilegrp ' == userInput[:13]:
-        sendGroupMessage(userInput[13:],'file',socket,box)
-    elif '\\mkgrp ' == userInput[:7]:
-        createGroup(userInput[7:],socket,box)
-    elif '\\addmem ' == userInput[:8]:
-        addMemberInGroup(userInput[8:],socket,box)
-    elif '\\rmmem ' == userInput[:7]:
-        removeMemberFromGroup(userInput[7:],socket,box)
-    elif '\\rmgrp ' == userInput[:7]:
-        leaveGroup(userInput[7:],socket,box)
-    elif '\\logout' == userInput:
-        socket.close()
-        log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
-        log += "User Logged Out"
-        updateLogs(log)
-        print("\n\n")
-        exit()
-    else:
+    try:
+        if '\\send ' == userInput[:6]:
+            sendMessage(userInput[6:],'text',socket,box)
+        elif '\\sendfile ' == userInput[:10]:
+            sendMessage(userInput[10:],'file',socket,box)
+        elif '\\sendgrp ' == userInput[:9]:
+            sendGroupMessage(userInput[9:],'text',socket,box)
+        elif '\\sendfilegrp ' == userInput[:13]:
+            sendGroupMessage(userInput[13:],'file',socket,box)
+        elif '\\mkgrp ' == userInput[:7]:
+            createGroup(userInput[7:],socket,box)
+        elif '\\addmem ' == userInput[:8]:
+            addMemberInGroup(userInput[8:],socket,box)
+        elif '\\rmmem ' == userInput[:7]:
+            removeMemberFromGroup(userInput[7:],socket,box)
+        elif '\\rmgrp ' == userInput[:7]:
+            leaveGroup(userInput[7:],socket,box)
+        elif '\\logout' == userInput:
+            socket.close()
+            log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+            log += "User Logged Out"
+            updateLogs(log)
+            print("\n\n")
+            exit()
+        else:
+            log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
+            log += "Invalid Command"
+            updateLogs(log)
+    except(IndexError):
         log = datetime.datetime.now().strftime("[ %d/%m/%Y | %H:%M:%S ] : ")
         log += "Invalid Command"
         updateLogs(log)
