@@ -221,6 +221,7 @@ def deleteMessageIfUndelivered(cmd,socket,box):
     :param box: Server Public Key and User Private Key
     :type box: nacl.public.Box
     """
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     username = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     
@@ -248,6 +249,7 @@ def deleteGroupMessageIfUndelivered(cmd,socket,box):
     :param box: Server Public Key and User Private Key
     :type box: nacl.public.Box
     """
+    log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
     groupName = cmd.split(" ",1)[0]
     message = cmd.split(" ",1)[1]
     
