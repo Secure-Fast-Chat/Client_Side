@@ -13,6 +13,9 @@ ENCODING_USED = "utf-8" # to store the encoding used
                         # The program uses universal encoding
 e2ePrivateKey = None # User Private Key
 
+GROUP_KEYS = {}
+USER_PUBLIC_KEYS = {}
+
 class Message:
     """This is the class to handle Encryption of messages. The format in which the message is sent to server is determined in this class
 
@@ -367,6 +370,8 @@ class Message:
         :return: key of user if found, None otherwise
         :rtype: nacl.public.PublicKey
         """
+        if uid in USER_PUBLIC_KEYS.keys():
+            return USER_PUBLIC_KEYS[uid]
         header = {
                 'request' : 'get-key' ,
                 'recvr-username' : uid,
@@ -381,7 +386,8 @@ class Message:
         if not header['key']:
             return None
         recvr_key = header['key']
-        return PublicKey(recvr_key, encoder=Base64Encoder)
+        USER_PUBLIC_KEYS[uid] = PublicKey(recvr_key,encoder=Base64Encoder)
+        return USER_PUBLIC_KEYS[uid]
 
     ####################################################################
     # Left to check the availability of uid and other minor edge cases #
@@ -438,6 +444,8 @@ class Message:
         :rtype: str or None
         """
 
+        if guid in GROUP_KEYS.keys():
+            return GROUP_KEYS[guid]
         header = {
                 'request' : 'grp-key',
                 'group-name': guid,
@@ -452,6 +460,7 @@ class Message:
             groupCreatorsPubKey = PublicKey(header['creatorPubKey'], encoder=Base64Encoder)
             box = Box(e2ePrivateKey, groupCreatorsPubKey)
             key = box.decrypt(header['group-key'], encoder=Base64Encoder) #Send the key after base64 encoding
+            GROUP_KEYS[guid] = key
             return key
         return None
 
