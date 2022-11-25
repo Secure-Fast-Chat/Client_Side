@@ -537,6 +537,10 @@ class Message:
         return struct.unpack('>H',self._recvd_msg)[0]
     
     def _get_server_from_lb(self):
+        """Function to get Server's host, port from load balancer
+        
+        :return: tuple of host, port of the server
+        :rtype: (str, int)"""
         self._recv_data_from_server(2,encrypted=False)
         header_len = struct.unpack(">H",self._recvd_msg)[0]
         self._recv_data_from_server(header_len,encrypted = False)
@@ -558,6 +562,48 @@ class Message:
         self._send_data_to_server()
         self._recv_data_from_server(2,encrypted = False)
         return struct.unpack(">H",self._recvd_msg)[0]
+
+    def _del_individual_message(self):
+        """ This function is used to send request to delete a message sent to an individual
+
+        :return: Exit status, 0 for success, 1 for failure
+        :rtype: int
+        """
+        recvr_key = self._get_user_public_key(self.request_content['recvr-username'])
+        if not recvr_key:
+            return 1
+        #send the message
+        msg = self._encryptE2E(self.request_content['message-content'],recvr_key)
+        # msg = self._encrypt_server(msg) #Encrypt it a second time so that an eavesdropper cannot see whom we sent the message to (otherwise they can see where this encrypted message went if they had access to every connection of the server)
+        header = {
+                'request' : 'del-msg',
+                'rcvr-uid' : self.request_content['recvr-username'],
+                }
+        self._prepare_request_to_send(header,content=msg,encrypt_content = False)
+        self._send_data_to_server()
+        return 0
+
+    def _del_group_message(self):
+        """ This function is used to send request to delete a message sent to a group
+
+        :return: Exit status, 0 for success, 1 for failure, 2 if invalid guid
+        :rtype: int
+        """
+        groupPrivateKey = self._get_group_key(self.request_content['guid'])
+        if not groupPrivateKey:
+            return 2
+        # print(groupPrivateKey)
+        box = nacl.secret.SecretBox(groupPrivateKey)
+
+        content = box.encrypt(self.request_content['message-content'], encoder=Base64Encoder)
+        header = {
+                'request': 'del-group-message',
+                'guid' : self.request_content['guid']
+                }
+        self._prepare_request_to_send(header,content=content)
+        self._send_data_to_server()
+        self._recv_data_from_server(2, False)
+        return struct.unpack('>H',self._recvd_msg)[0]
 
     def processTask(self):
         """ Processes the task to do
@@ -589,4 +635,8 @@ class Message:
             return self._leave_grp()
         if self.task == 'remove-mem':
             return self._remove_member_from_group()
+        if self.task == 'del-message':
+            return self._del_individual_message()
+        if self.task == 'del-group-message':
+            return self._del_group_message()
         print(f"Unknown request {self.task}")

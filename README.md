@@ -12,6 +12,12 @@ After login, one can use the following commands for using the app.
 - `\sendfile <username> <file>`
 
 	Use this command to send `file` to `username` where `file` is relative address of file.
+- `\delmsg <username> <message>`
+
+	Use this command to delete an undelivered message to user
+- `\delgrpmsg <groupname> <message>`
+
+	Use this command to delete an undelivered message of a group
 
 ### Group Related Commands
 
@@ -27,6 +33,18 @@ After login, one can use the following commands for using the app.
 - `\sendfilegrp <grpname> <file>`
 	
 	Use this command to send file in group.
+- `\rmmem <grpname> <username>`
+
+	Use this command to remove a group member
+- `\rmgrp <grpname>`
+
+	Use this command to leave a group
+
+### Other Commands
+
+- `\logout`
+
+	Use this command to logout 
 
 ### Other Information
 
