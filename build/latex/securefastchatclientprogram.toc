@@ -4,5 +4,5 @@
 \contentsline {section}{\numberline {1.2}app module}{5}{section.1.2}%
 \contentsline {section}{\numberline {1.3}userInputHandler module}{6}{section.1.3}%
 \contentsline {chapter}{\numberline {2}Indices and tables}{9}{chapter.2}%
-\contentsline {chapter}{Python Module Index}{11}{section*.38}%
-\contentsline {chapter}{Index}{13}{section*.39}%
+\contentsline {chapter}{Python Module Index}{11}{section*.51}%
+\contentsline {chapter}{Index}{13}{section*.52}%
