@@ -63,7 +63,7 @@ def sendMessage(cmd,content_type,socket,box):
     msg = Message.Message(socket,'send-message',request,box)
     response = msg.processTask()
     if response == 0:
-        log += "Message Sent Successfully"
+        log += "Message Sent to " + username
     if response == 1:
         log +="No user with userid: "+username
     updateLogs(log)
@@ -104,7 +104,7 @@ def sendGroupMessage(cmd,content_type,socket,box):
     msg = Message.Message(socket,'send-group-message',request,box)
     response = msg.processTask()
     if response == 0:
-        log += "Message Sent Successfully"
+        log += "Message Sent to "+ groupName
     if response == 1:
         log += "Couldn't Send"
     if response == 2:

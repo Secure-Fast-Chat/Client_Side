@@ -28,8 +28,7 @@ port = 8000
 
 def getPassword(prompt):
     # passwd = getpass.getpass(prompt = prompt)
-    passwd = input(prompt)
-    return passwd
+    return input(prompt)
 ENCODING_USED = "utf-8" 
 
 welcome_message = """    1. Login using and existing account
@@ -101,6 +100,7 @@ def connectToServer():
     box = Box(privatekey, serverkey)
     
     return sock, box
+
 def login(sock, box):
     """Function to help user log in to the app
 
@@ -113,6 +113,7 @@ def login(sock, box):
     """
 
     uid = input("Enter Username: ")
+    userInputHandler.USERNAME = uid
     passwd = getPassword(prompt = "Enter Password: ")
     
 
@@ -207,13 +208,17 @@ def handleMessageFromServer(socket,box):
     else:
         to_print = '[' + msg['sender'] + ' : ' + msg['timestamp'].strftime("%d/%m/%Y - %H:%M:%S") + ']: ' + msg['content']
     
-    to_print = msg['content'] + f'\t{str(datetime.timestamp(datetime.now()))}' # TODO: Only for performance analysis
-    f = open(os.path.join(os.path.expanduser('~'),'SecureFastChatMessages.txt'),'a')
+    to_print = str(datetime.timestamp(datetime.now())) + '\t' + msg['sender'] # TODO: Only for performance analysis
+    uid = userInputHandler.USERNAME
+    f = open(f'SecureFastChatMessages_{uid}.txt','a')
     f.write(to_print+'\n')
+    f.close()
 
+    log += f"Messaged Recieved from {msg['sender']}"
     print('\033[s\033[3B'+to_print.strip() + '\033[K\033[u',end = '')
     sys.stdout.flush()
     updateLogs(log)
+
 if __name__ == "__main__":
     os.system('clear')
     conn_socket = None
