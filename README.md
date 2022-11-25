@@ -12,12 +12,6 @@ After login, one can use the following commands for using the app.
 - `\sendfile <username> <file>`
 
 	Use this command to send `file` to `username` where `file` is relative address of file.
-- `\delmsg <username> <message>`
-
-	Use this command to delete an undelivered message to user
-- `\delgrpmsg <groupname> <message>`
-
-	Use this command to delete an undelivered message of a group
 
 ### Group Related Commands
 
