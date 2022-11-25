@@ -208,7 +208,7 @@ def handleMessageFromServer(socket,box):
     else:
         to_print = '[' + msg['sender'] + ' : ' + msg['timestamp'].strftime("%d/%m/%Y - %H:%M:%S") + ']: ' + msg['content']
     
-    to_print = str(datetime.timestamp(datetime.now())) + '\t' + msg['sender'] # TODO: Only for performance analysis
+    # to_print = str(datetime.timestamp(datetime.now())) + '\t' + msg['sender'] # TODO: Only for performance analysis
     uid = userInputHandler.USERNAME
     f = open(f'SecureFastChatMessages_{uid}.txt','a')
     f.write(to_print+'\n')
