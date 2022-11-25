@@ -297,9 +297,9 @@ def handleUserInput(socket,box):
             removeMemberFromGroup(userInput[7:],socket,box)
         elif '\\rmgrp ' == userInput[:7]:
             leaveGroup(userInput[7:],socket,box)
-        elif '\\delmsg' == userInput[:8]:
+        elif '\\delmsg ' == userInput[:8]:
             deleteMessageIfUndelivered(userInput[8:],socket,box)
-        elif '\\delgrpmsg' == userInput[:11]:
+        elif '\\delgrpmsg ' == userInput[:11]:
             deleteGroupMessageIfUndelivered(userInput[11:],socket,box)
         elif '\\logout' == userInput:
             socket.close()
