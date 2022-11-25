@@ -319,17 +319,10 @@ class Message:
         global ENCODING_USED
         publickey = self.request_content['key']
         jsonheader = {
-            "byteorder": sys.byteorder,
             "request" : 'keyex',
             "key": publickey,
-            "content-encoding" : ENCODING_USED,
-            "content-len": 0,
         }
-        encoded_json_header = self._json_encode(jsonheader,ENCODING_USED)
-        proto_header = struct.pack('>H',len(encoded_json_header))
-        # Command to use for unpacking of proto_header: 
-        # struct.unpack('>H',proto_header)[0]
-        self._data_to_send = proto_header + encoded_json_header # Not sending any content since the data is in the header
+        self._prepare_request_to_send(jsonheader,encrypt_header=False)
         self._send_data_to_server()
  
     def _recvmsg(self):
@@ -522,13 +515,12 @@ class Message:
         box = nacl.secret.SecretBox(groupPrivateKey)
 
         content = box.encrypt(self.request_content['message-content'], encoder=Base64Encoder)
-        content = self._encrypt_server(content)
         header = {
                 'request': 'send-group-message',
                 'content-type' : self.request_content['content-type'], 
                 'guid' : self.request_content['guid']
                 }
-        seld._prepare_request_to_send(header,content=content)
+        self._prepare_request_to_send(header,content=content)
         self._send_data_to_server()
         self._recv_data_from_server(2, False)
         return struct.unpack('>H',self._recvd_msg)[0]
@@ -584,4 +576,6 @@ class Message:
             return self._get_server_from_lb()
         if self.task == 'leave-grp':
             return self._leave_grp()
+        if self.task == 'remove-mem':
+            return self._remove_member_from_group()
         print(f"Unknown request {self.task}")
