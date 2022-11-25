@@ -22,7 +22,7 @@ start_up_banner = """
            -Developed by: Khushang Singla, Mridul Agarwal, Arhaan Ahmad
 """
 
-host = "192.168.29.189"
+host = "127.0.0.1"
 port = 8000
 
 

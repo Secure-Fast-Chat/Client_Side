@@ -211,6 +211,63 @@ def removeMemberFromGroup(cmd,socket,box):
         log += 'There is no user with username: ' + userID
     updateLogs(log)
 
+def deleteMessageIfUndelivered(cmd,socket,box):
+    """ Function to delete individual message if undelivered
+
+    :param cmd: The part of command containing group name and member userid
+    :type cmd: str
+    :param socket: Socket with active authorized connection to server
+    :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
+    """
+    username = cmd.split(" ",1)[0]
+    message = cmd.split(" ",1)[1]
+    
+    message = message.encode(Message.ENCODING_USED)
+
+    request = {
+            'message-content' : message ,
+            'recvr-username' : username 
+            }
+    msg = Message.Message(socket,'del-message',request,box)
+    response = msg.processTask()
+    if response == 0:
+        log += "Message Sent to " + username + "Deleted if Undelivered"
+    if response == 1:
+        log +="No user with userid: "+username
+    updateLogs(log)
+
+def deleteGroupMessageIfUndelivered(cmd,socket,box):
+    """ Function to delete individual message if undelivered
+
+    :param cmd: The part of command containing group name and member userid
+    :type cmd: str
+    :param socket: Socket with active authorized connection to server
+    :type socket: socket.socket
+    :param box: Server Public Key and User Private Key
+    :type box: nacl.public.Box
+    """
+    groupName = cmd.split(" ",1)[0]
+    message = cmd.split(" ",1)[1]
+    
+    message = message.encode(Message.ENCODING_USED)
+
+    request = {
+            'message-content' : message ,
+            'guid' : groupName 
+            }
+    msg = Message.Message(socket,'del-group-message',request,box)
+    response = msg.processTask()
+    if response == 0:
+        log += "Message Sent to "+ groupName + "Deleted for users that were Offline"
+    if response == 1:
+        log += "Couldn't Send"
+    if response == 2:
+        log += "No group with group name "+groupName
+    updateLogs(log)
+
+
 def handleUserInput(socket,box):
     """ This function is called when the user sends some input. This function does the work asked by user
 
@@ -238,6 +295,10 @@ def handleUserInput(socket,box):
             removeMemberFromGroup(userInput[7:],socket,box)
         elif '\\rmgrp ' == userInput[:7]:
             leaveGroup(userInput[7:],socket,box)
+        elif '\\delmsg' == userInput[:8]:
+            deleteMessageIfUndelivered(userInput[8:],socket,box)
+        elif '\\delgrpmsg' == userInput[:11]:
+            deleteGroupMessageIfUndelivered(userInput[11:],socket,box)
         elif '\\logout' == userInput:
             socket.close()
             log = str(datetime.datetime.timestamp(datetime.datetime.now()))+" : " 
